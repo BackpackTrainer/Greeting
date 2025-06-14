@@ -97,5 +97,37 @@ class GreetingControllerMockMvcTest {
         assertTrue(actual.containsAll(expected) && expected.containsAll(actual));
     }
 
+    @Test
+    void postNewGreetingAddsFredToDatabase() throws Exception {
+        String testName = "Fred";
+        String testMessage = "Good morning, Fred!";
+        GreetingDto newGreeting = new GreetingDto(testName, testMessage);
+
+        mockMvc.perform(
+                        org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post("/greet")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(new ObjectMapper().writeValueAsString(newGreeting))
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value(testName))
+                .andExpect(jsonPath("$.message").value(testMessage));
+
+        // Optional: Confirm via GET that Fred was added
+        mockMvc.perform(get("/greet/Fred")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().string(testMessage));
+    }
+    @Test
+    void greetReturnsDefaultMessageForUnknownName() throws Exception {
+        String unknownName = "Zelda";
+        String expectedMessage = "Hello, Zelda!";
+
+        mockMvc.perform(get("/greet/" + unknownName)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().string(expectedMessage));
+    }
+
 }
 

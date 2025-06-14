@@ -13,6 +13,8 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.assertj.MockMvcTester;
 import org.springframework.test.web.servlet.assertj.MvcTestResult;
 
+import java.io.UnsupportedEncodingException;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 
@@ -88,4 +90,48 @@ MockMvcTester mockMvcTester;
                 .hasBodyTextEqualTo(message)
                 .hasContentType(MediaType.APPLICATION_JSON);
     }
+
+    @Test
+    void postNewGreetingAddsFredToDatabase_MockMvcTester() throws UnsupportedEncodingException {
+        String testName = "Fred";
+        String testMessage = "Good morning, Fred!";
+        String payload = """
+            {
+              "name": "Fred",
+              "message": "Good morning, Fred!"
+            }
+            """;
+
+        MvcTestResult result = mockMvcTester.post()
+                .uri("/greet")
+                .content(payload)
+                .contentType(MediaType.APPLICATION_JSON)
+                .exchange();
+
+        assertThat(result)
+                .hasStatusOk()
+                .hasContentType(MediaType.APPLICATION_JSON);
+
+        String responseBody = result.getResponse().getContentAsString();
+        assertThat(responseBody).contains("\"name\":\"Fred\"");
+        assertThat(responseBody).contains("\"message\":\"Good morning, Fred!\"");
+    }
+    @Test
+    void greetReturnsDefaultMessageForNewUnknownUser() throws Exception {
+        String name = "Zelda";
+        String expectedMessage = "Hello, Zelda!";
+
+        MvcTestResult result = mockMvcTester.get()
+                .uri("/greet/" + name)
+                .accept(MediaType.APPLICATION_JSON)
+                .exchange();
+
+        assertThat(result)
+                .hasStatusOk()
+                .hasContentType(MediaType.APPLICATION_JSON);
+
+        String responseBody = result.getResponse().getContentAsString();
+        assertThat(responseBody).isEqualTo(expectedMessage);
+    }
+
 }

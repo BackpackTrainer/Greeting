@@ -95,12 +95,12 @@ MockMvcTester mockMvcTester;
     void postNewGreetingAddsFredToDatabase_MockMvcTester() throws UnsupportedEncodingException {
         String testName = "Fred";
         String testMessage = "Good morning, Fred!";
-        String payload = """
+        String payload = String.format("""
             {
-              "name": "Fred",
-              "message": "Good morning, Fred!"
+              "name": "%s",
+              "message": "%s"
             }
-            """;
+    """, testName, testMessage);
 
         MvcTestResult result = mockMvcTester.post()
                 .uri("/greet")
@@ -113,8 +113,16 @@ MockMvcTester mockMvcTester;
                 .hasContentType(MediaType.APPLICATION_JSON);
 
         String responseBody = result.getResponse().getContentAsString();
-        assertThat(responseBody).contains("\"name\":\"Fred\"");
-        assertThat(responseBody).contains("\"message\":\"Good morning, Fred!\"");
+        assertThat(responseBody).contains("\"name\":\"" + testName + "\"");
+        assertThat(responseBody).contains("\"message\":\"" + testMessage + "\"");
+
+        //alternative way to check the response body
+        String expectedNameFragment = String.format("\"name\":\"%s\"", testName);
+        String expectedMessageFragment = String.format("\"message\":\"%s\"", testMessage);
+
+        assertThat(responseBody).contains(expectedNameFragment);
+        assertThat(responseBody).contains(expectedMessageFragment);
+
     }
     @Test
     void greetReturnsDefaultMessageForNewUnknownUser() throws Exception {
@@ -133,5 +141,4 @@ MockMvcTester mockMvcTester;
         String responseBody = result.getResponse().getContentAsString();
         assertThat(responseBody).isEqualTo(expectedMessage);
     }
-
 }

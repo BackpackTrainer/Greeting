@@ -1,4 +1,5 @@
 package com.example.demo.service;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -21,12 +22,14 @@ public class GreetingServiceImpl implements GreetingService {
         this.greetingRepository = repository;
     }
 
+
     @Override
     public String greet(String name) {
         return greetingRepository.findByName(name)
                 .map(Greeting::getMessage)
-                .orElse("Hello, " + name + "!");
+                .orElseThrow(() -> new NoSuchElementException("No greeting found for name: " + name));
     }
+
 
     @Override
     public List<GreetingDto> findAllGreetings() {
@@ -60,6 +63,34 @@ public class GreetingServiceImpl implements GreetingService {
         // Convert to DTO and return
         return mapToDto(savedGreeting);
     }
+
+    @Override
+    public GreetingDto addGreeting(GreetingDto dto) {
+        if (greetingRepository.findByName(dto.getName()).isPresent()) {
+            throw new IllegalArgumentException("Name already exists: " + dto.getName());
+        }
+
+        Greeting newGreeting = new Greeting();
+        newGreeting.setName(dto.getName());
+        newGreeting.setMessage(dto.getMessage());
+        Greeting saved = greetingRepository.save(newGreeting);
+        return mapToDto(saved);
+    }
+
+    @Override
+    public Optional<GreetingDto> updateGreeting(GreetingDto dto) {
+        Optional<Greeting> existingGreeting = greetingRepository.findByName(dto.getName());
+
+        if (existingGreeting.isPresent()) {
+            Greeting greeting = existingGreeting.get();
+            greeting.setMessage(dto.getMessage());
+            Greeting saved = greetingRepository.save(greeting);
+            return Optional.of(mapToDto(saved));
+        }
+
+        return Optional.empty(); // No member found to update
+    }
+
 
     private GreetingDto mapToDto(Greeting greeting) {
         GreetingDto dto = new GreetingDto();

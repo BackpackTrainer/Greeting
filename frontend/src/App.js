@@ -1,25 +1,18 @@
-import logo from './logo.svg';
+import React from 'react';
+import GreetingList from './components/GreetingList';
+import GreetingLookup from './components/GreetingLookup';
+import GreetingAdd from './components/GreetingAdd';
+import GreetingUpdate from './components/GreetingUpdate';
 import './App.css';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+      <div className="App">
+        <GreetingList />
+        <GreetingLookup />
+        <GreetingAdd />
+          <GreetingUpdate />
+      </div>
   );
 }
-
 export default App;

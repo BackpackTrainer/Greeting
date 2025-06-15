@@ -25,7 +25,7 @@ const GreetingAdd = () => {
             }
 
             const data = await response.json();
-            setResult(`✅ Greeting added for ${data.name}`);
+            setResult(`✅ New member ${data.name} added with message: ${data.message}! 🎉`);
             setError('');
             setName('');
             setMessage('');

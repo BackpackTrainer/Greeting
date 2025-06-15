@@ -18,7 +18,7 @@ const GreetingLookup = () => {
             setError('');
         } catch (err) {
             setMessage('');
-            setError(`No greeting found for "${name}"`);
+            setError(`${name} is not currently a member. Use the Add a New Member function if you would like to add them.`);
         }
     };
 

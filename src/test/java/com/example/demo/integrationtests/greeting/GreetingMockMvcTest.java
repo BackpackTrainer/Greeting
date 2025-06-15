@@ -20,6 +20,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
 @ActiveProfiles("test")
 @SpringBootTest
@@ -37,8 +39,8 @@ class GreetingControllerMockMvcTest {
 
         mockMvc.perform(get("/greet/" + unknownUserName)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(content().string("Hello, " + unknownUserName + "!"));
+                .andExpect(status().isNotFound())
+                .andExpect(content().string("No greeting found for name: " + unknownUserName));
     }
 
     @Test
@@ -121,12 +123,73 @@ class GreetingControllerMockMvcTest {
     @Test
     void greetReturnsDefaultMessageForUnknownName() throws Exception {
         String unknownName = "Zelda";
-        String expectedMessage = "Hello, Zelda!";
+        String expectedMessage = "No greeting found for name: " + unknownName;
 
         mockMvc.perform(get("/greet/" + unknownName)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
+                .andExpect(status().isNotFound())
                 .andExpect(content().string(expectedMessage));
+    }
+
+    @Test
+    void postGreetingFailsWhenUserAlreadyExists() throws Exception {
+        String existingName = "Alice";
+        String message = "Hello again!";
+        String payload = String.format("""
+        {
+          "name": "%s",
+          "message": "%s"
+        }
+    """, existingName, message);
+
+        mockMvc.perform(post("/greet/add")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(payload))
+                .andExpect(status().isConflict());
+    }
+
+    @Test
+    void updateGreetingForExistingUserReturnsOk() throws Exception {
+        String name = "Alice";
+        String message = "Updated message!";
+        String payload = String.format("""
+        {
+          "name": "%s",
+          "message": "%s"
+        }
+    """, name, message);
+
+        mockMvc.perform(put("/greet")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(payload))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+    }
+
+    @Test
+    void updateGreetingForNonexistentUserReturnsNotFound() throws Exception {
+        String name = "Zorro";
+        String message = "He leaves his mark.";
+        String payload = String.format("""
+        {
+          "name": "%s",
+          "message": "%s"
+        }
+    """, name, message);
+
+        mockMvc.perform(put("/greet")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(payload))
+                .andExpect(status().isNotFound());
+    }
+    @Test
+    void getAllGreetingsReturnsKnownUsers() throws Exception {
+        mockMvc.perform(get("/greet/all")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("Alice")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("Carol")));
     }
 
 }

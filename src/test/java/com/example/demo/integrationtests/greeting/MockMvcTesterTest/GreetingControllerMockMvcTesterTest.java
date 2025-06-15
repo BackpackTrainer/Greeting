@@ -6,6 +6,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
@@ -29,7 +30,7 @@ public class GreetingControllerMockMvcTesterTest {
 MockMvcTester mockMvcTester;
 
     @Test
-    void greetReturnsStatusCodeOKWhenUserNotFound() {
+    void greetReturnsStatusCodeNotFoundWhenUserNotFound() {
         String unknownUserName = "Bob";
         String url = "/greet/" + unknownUserName;
 
@@ -38,13 +39,14 @@ MockMvcTester mockMvcTester;
                 .accept(MediaType.APPLICATION_JSON);
 
         assertThat(response)
-                .hasStatusOk();
+                .hasStatus(HttpStatus.NOT_FOUND);
+
     }
 
     @Test
     void greetReturnsDefaultMessageWhenUserNotFound() {
         String unknownUserName = "Bob";
-        String unknownUserMessage = "Hello, " + unknownUserName + "!";
+        String unknownUserMessage = "No greeting found for name: " + unknownUserName;
         String url = "/greet/" + unknownUserName;
 
         MvcTestResult result = mockMvcTester.get()
@@ -53,7 +55,7 @@ MockMvcTester mockMvcTester;
                 .exchange();
 
         assertThat(result)
-                .hasStatusOk()
+                .hasStatus(HttpStatus.NOT_FOUND)
                 .hasBodyTextEqualTo(unknownUserMessage)
                 .hasContentType(MediaType.APPLICATION_JSON);
     }
@@ -127,7 +129,7 @@ MockMvcTester mockMvcTester;
     @Test
     void greetReturnsDefaultMessageForNewUnknownUser() throws Exception {
         String name = "Zelda";
-        String expectedMessage = "Hello, Zelda!";
+        String expectedMessage = "No greeting found for name: " + name;
 
         MvcTestResult result = mockMvcTester.get()
                 .uri("/greet/" + name)
@@ -135,10 +137,73 @@ MockMvcTester mockMvcTester;
                 .exchange();
 
         assertThat(result)
-                .hasStatusOk()
+                .hasStatus(HttpStatus.NOT_FOUND)
                 .hasContentType(MediaType.APPLICATION_JSON);
 
         String responseBody = result.getResponse().getContentAsString();
         assertThat(responseBody).isEqualTo(expectedMessage);
     }
+
+    @Test
+    void postGreetingFailsWhenUserAlreadyExists() {
+        String existingName = "Alice";
+        String message = "Hello again!";
+        String payload = String.format("""
+        {
+          "name": "%s",
+          "message": "%s"
+        }
+    """, existingName, message);
+
+        MvcTestResult result = mockMvcTester.post()
+                .uri("/greet/add")
+                .content(payload)
+                .contentType(MediaType.APPLICATION_JSON)
+                .exchange();
+
+        assertThat(result)
+                .hasStatus(HttpStatus.CONFLICT);
+    }
+    @Test
+    void updateGreetingForExistingUserReturnsOk() {
+        String name = "Alice";
+        String newMessage = "Updated message!";
+        String payload = String.format("""
+        {
+          "name": "%s",
+          "message": "%s"
+        }
+    """, name, newMessage);
+
+        MvcTestResult result = mockMvcTester.put()
+                .uri("/greet")
+                .content(payload)
+                .contentType(MediaType.APPLICATION_JSON)
+                .exchange();
+
+        assertThat(result)
+                .hasStatusOk()
+                .hasContentType(MediaType.APPLICATION_JSON);
+    }
+
+    @Test
+    void updateGreetingForNonexistentUserReturnsNotFound() {
+        String name = "Ghost";
+        String message = "You shouldn't see this";
+        String payload = String.format("""
+        {
+          "name": "%s",
+          "message": "%s"
+        }
+    """, name, message);
+
+        MvcTestResult result = mockMvcTester.put()
+                .uri("/greet")
+                .content(payload)
+                .contentType(MediaType.APPLICATION_JSON)
+                .exchange();
+
+        assertThat(result).hasStatus(HttpStatus.NOT_FOUND);
+    }
+
 }

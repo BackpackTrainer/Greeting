@@ -118,7 +118,7 @@ MockMvcTester mockMvcTester;
         assertThat(responseBody).contains("\"name\":\"" + testName + "\"");
         assertThat(responseBody).contains("\"message\":\"" + testMessage + "\"");
 
-        //alternative way to check the response body
+        //alternative way to check the response body using named variables
         String expectedNameFragment = String.format("\"name\":\"%s\"", testName);
         String expectedMessageFragment = String.format("\"message\":\"%s\"", testMessage);
 
@@ -205,5 +205,4 @@ MockMvcTester mockMvcTester;
 
         assertThat(result).hasStatus(HttpStatus.NOT_FOUND);
     }
-
 }

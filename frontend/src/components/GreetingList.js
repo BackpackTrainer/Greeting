@@ -22,14 +22,32 @@ const GreetingList = () => {
     };
 
     return (
-        <div style={styles.container}>
-            <h2>All Greetings</h2>
-            <button onClick={fetchGreetings} style={styles.button}>Get All Members</button>
-            <button onClick={clearUI} style={{ ...styles.button, backgroundColor: '#ff9800' }}>Clear Display</button>
-            {error && <p style={styles.error}>❌ {error}</p>}
-            <ul style={styles.list}>
+        <div style={styles.container} data-testid="greeting-container">
+            <h2 data-testid="greeting-header">All Greetings</h2>
+            <button
+                onClick={fetchGreetings}
+                style={styles.button}
+                data-testid="get-all-members"
+            >
+                Get All Members
+            </button>
+            <button
+                onClick={clearUI}
+                style={{ ...styles.button, backgroundColor: '#ff9800' }}
+                data-testid="clear-display-button"
+            >
+                Clear Display
+            </button>
+
+            {error && (
+                <p style={styles.error} data-testid="error-message">
+                    ❌ {error}
+                </p>
+            )}
+
+            <ul style={styles.list} data-testid="greeting-list">
                 {greetings.map((greeting, index) => (
-                    <li key={index}>
+                    <li key={index} data-testid="member-row">
                         <strong>{greeting.name}:</strong> {greeting.message}
                     </li>
                 ))}

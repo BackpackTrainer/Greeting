@@ -31,10 +31,25 @@ const GreetingLookup = () => {
                 placeholder="Enter name..."
                 onChange={(e) => setName(e.target.value)}
                 style={styles.input}
+                data-testid="find-greeting-input"
             />
-            <button onClick={fetchGreeting} style={styles.button}>Get Greeting</button>
-            {message && <p style={styles.message}>💬 {message}</p>}
-            {error && <p style={styles.error}>❌ {error}</p>}
+            <button
+                onClick={fetchGreeting}
+                style={styles.button}
+                data-testid="find-greeting-button"
+            >
+                Get Greeting
+            </button>
+            {message && (
+                <p style={styles.message} data-testid="greeting-message">
+                    💬 {message}
+                </p>
+            )}
+            {error && (
+                <p style={styles.error} data-testid="greeting-error">
+                    ❌ {error}
+                </p>
+                )}
         </div>
     );
 };

@@ -6,4 +6,9 @@ import org.junit.platform.suite.api.*;
 @IncludeEngines("cucumber")
 @SelectClasspathResource("features")
 @ConfigurationParameter(key = "cucumber.plugin", value = "pretty")
-public class CucumberTest {}
+@ConfigurationParameter(
+        key = "cucumber.glue",
+        value = "com.example.demo.bdd.steps.selenium,com.example.demo.bdd.config"
+)
+public class CucumberSeleniumTest {
+}

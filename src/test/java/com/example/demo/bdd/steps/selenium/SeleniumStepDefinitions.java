@@ -1,5 +1,8 @@
 package com.example.demo.bdd.steps.selenium;
 
+
+import com.example.demo.bdd.config.CucumberSpringConfiguration;
+import com.example.demo.bdd.util.TestDataCleaner;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
@@ -11,19 +14,34 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
 
 import static com.example.demo.bdd.util.WaitUtility.waitForElementCount;
 import static com.example.demo.bdd.util.EmojiStripper.stripEmojiPrefix;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
 
 public class SeleniumStepDefinitions {
 
     private WebDriver driver;
 
-    @Before
+    @Autowired
+    private TestDataCleaner testDataCleaner;
+
+    //I could have combined the two @Before methods into one, but I wanted to keep them separate since they serve different purposes.
+    //Cucumber was having issues with two @Before methods in the same class.  The problem was solved by using the (order =).
+    // In this case, I really don't care about the order of the two methods.
+    @Before(order = 1)
+    public void resetDatabaseBeforeEachScenario() {
+        testDataCleaner.resetTestData();
+    }
+
+    @Before(order = 2)
     public void setUp() {
         WebDriverManager.chromedriver().setup();
         driver = new ChromeDriver();
@@ -125,6 +143,43 @@ public class SeleniumStepDefinitions {
         // Strip off the 💬 if you don't want to include it in the feature file
         String displayedError = stripEmojiPrefix(actualText);
         assertEquals(expectedGreeting, displayedError);
+    }
+
+    @When("I enter {string} and {string} in the Add Greeting form")
+    public void iEnterNameAndGreetingInTheAddGreetingForm(String name, String greeting) {
+        WebElement nameInput = driver.findElement(By.cssSelector("[data-testid='add-name-input']"));
+        WebElement greetingInput = driver.findElement(By.cssSelector("[data-testid='add-greeting-input']"));
+        WebElement addButton = driver.findElement(By.cssSelector("[data-testid='add-greeting-button']"));
+
+        nameInput.clear();
+        nameInput.sendKeys(name);
+
+        greetingInput.clear();
+        greetingInput.sendKeys(greeting);
+
+        addButton.click();
+    }
+
+    @Then("I should see the success message {string}")
+    public void iShouldSeeTheSuccessMessage(String expectedSuccessMessage) {
+        waitForElementCount(driver, By.cssSelector("[data-testid='add-result-message']"), 1);
+
+        WebElement result = driver.findElement(By.cssSelector("[data-testid='add-result-message']"));
+        String actualText = result.getText();
+
+        String displayedMessage = stripEmojiPrefix(actualText);
+
+        assertEquals(expectedSuccessMessage, displayedMessage);
+    }
+
+    @When("I search for {string} in the Find Greeting by Name form")
+    public void iSearchForNameInTheFindGreetingByNameForm(String name) {
+        WebElement input = driver.findElement(By.cssSelector("[data-testid='find-greeting-input']"));
+        input.clear();
+        input.sendKeys(name);
+
+        WebElement button = driver.findElement(By.cssSelector("[data-testid='find-greeting-button']"));
+        button.click();
     }
 }
 

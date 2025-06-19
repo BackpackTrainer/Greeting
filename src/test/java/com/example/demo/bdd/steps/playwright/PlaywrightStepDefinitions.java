@@ -1,5 +1,6 @@
 package com.example.demo.bdd.steps.playwright;
 
+import com.example.demo.bdd.util.TestDataCleaner;
 import com.microsoft.playwright.*;
 import com.microsoft.playwright.options.WaitForSelectorState;
 import io.cucumber.datatable.DataTable;
@@ -7,6 +8,8 @@ import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.*;
 import org.junit.jupiter.api.Assertions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
@@ -14,13 +17,22 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static com.example.demo.bdd.util.EmojiStripper.stripEmojiPrefix;
 
+
 public class PlaywrightStepDefinitions {
 
     private Playwright playwright;
     private Browser browser;
     private Page page;
 
-    @Before
+    @Autowired
+    private TestDataCleaner testDataCleaner;
+
+    @Before(order = 1)
+    public void resetDatabaseBeforeEachScenario() {
+        testDataCleaner.resetTestData();
+    }
+
+    @Before(order = 2)
     public void setUp() {
         playwright = Playwright.create();
         browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false));
@@ -62,8 +74,6 @@ public class PlaywrightStepDefinitions {
     @Then("the following members should be returned:")
     public void theFollowingMembersShouldBeReturned(DataTable dataTable) {
         List<Map<String, String>> expectedRows = dataTable.asMaps(String.class, String.class);
-
-        // Wait for expected number of rows to appear
         page.waitForCondition(() -> page.locator("[data-testid='member-row']").count() == expectedRows.size());
 
         for (int i = 0; i < expectedRows.size(); i++) {
@@ -100,7 +110,6 @@ public class PlaywrightStepDefinitions {
 
         String actualText = message.innerText();
         String displayedGreeting = stripEmojiPrefix(actualText);
-
         assertEquals(expectedGreeting, displayedGreeting);
     }
 
@@ -111,8 +120,38 @@ public class PlaywrightStepDefinitions {
 
         String actualText = error.innerText();
         String displayedError = stripEmojiPrefix(actualText);
-
         assertEquals(expectedErrorMessage, displayedError);
     }
 
+    // 🔥 NEW: Missing step added
+    @When("I enter {string} and {string} in the Add Greeting form")
+    public void iEnterNameAndGreetingInTheAddGreetingForm(String name, String greeting) {
+        Locator nameInput = page.locator("[data-testid='add-name-input']");
+        Locator greetingInput = page.locator("[data-testid='add-greeting-input']");
+        Locator addButton = page.locator("[data-testid='add-greeting-button']");
+
+        nameInput.fill(name);
+        greetingInput.fill(greeting);
+        addButton.click();
+    }
+
+    // 🔥 NEW: Missing step added
+    @Then("I should see the success message {string}")
+    public void iShouldSeeTheSuccessMessage(String expectedSuccessMessage) {
+        Locator result = page.locator("[data-testid='add-result-message']");
+        result.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE));
+
+        String actualText = result.innerText();
+        String displayedMessage = stripEmojiPrefix(actualText);
+        assertEquals(expectedSuccessMessage, displayedMessage);
+    }
+
+    // 🔥 NEW: Missing step added (this is the second variant you have in Selenium)
+    @When("I search for {string} in the Find Greeting by Name form")
+    public void iSearchForNameInTheFindGreetingByNameForm(String name) {
+        Locator input = page.locator("[data-testid='find-greeting-input']");
+        input.fill(name);
+        Locator button = page.locator("[data-testid='find-greeting-button']");
+        button.click();
+    }
 }

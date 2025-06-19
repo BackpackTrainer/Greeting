@@ -25,7 +25,7 @@ const GreetingAdd = () => {
             }
 
             const data = await response.json();
-            setResult(`✅ New member ${data.name} added with message: ${data.message}! 🎉`);
+            setResult(`✅ New member ${data.name} added with message: ${data.message} 🎉`);
             setError('');
             setName('');
             setMessage('');
@@ -44,6 +44,7 @@ const GreetingAdd = () => {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 style={styles.input}
+                data-testid="add-name-input"
             />
             <input
                 type="text"
@@ -51,10 +52,26 @@ const GreetingAdd = () => {
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 style={styles.input}
+                data-testid="add-greeting-input"
             />
-            <button onClick={handleSubmit} style={styles.button}>Add Greeting</button>
-            {result && <p style={styles.result}>{result}</p>}
-            {error && <p style={styles.error}>{error}</p>}
+            <button
+                onClick={handleSubmit}
+                style={styles.button}
+                data-testid="add-greeting-button"
+            >
+                Add Greeting
+            </button>
+            {result && (
+                <p style={styles.result} data-testid="add-result-message">
+                    {result}
+                </p>
+            )}
+            {error && (
+                <p style={styles.error} data-testid="add-error-message">
+                    {error}
+                </p>
+            )}
+
         </div>
     );
 };

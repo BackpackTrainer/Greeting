@@ -24,12 +24,10 @@ const GreetingUpdate = () => {
                 const data = await response.json();
                 setFeedback(`✅ Greeting for ${data.name} was successfully updated.`);
                 setError('');
-            }  else if (response.status === 404) {
-            setFeedback('');
-            setError(`❌ No update made: Member "${name}" was not found in the database.`);
-        }
-
-     else {
+            } else if (response.status === 404) {
+                setFeedback('');
+                setError(`❌ No update made: Member "${name}" was not found in the database.`);
+            } else {
                 throw new Error(`Unexpected status: ${response.status}`);
             }
         } catch (err) {
@@ -47,6 +45,7 @@ const GreetingUpdate = () => {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 style={styles.input}
+                data-testid="update-name-input"
             />
             <input
                 type="text"
@@ -54,11 +53,26 @@ const GreetingUpdate = () => {
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 style={styles.input}
+                data-testid="update-greeting-input"
             />
-            <button onClick={handleUpdate} style={styles.button}>Update</button>
+            <button
+                onClick={handleUpdate}
+                style={styles.button}
+                data-testid="update-greeting-button"
+            >
+                Update
+            </button>
 
-            {feedback && <p style={styles.feedback}>{feedback}</p>}
-            {error && <p style={styles.error}>{error}</p>}
+            {feedback && (
+                <p style={styles.feedback} data-testid="update-result-message">
+                    {feedback}
+                </p>
+            )}
+            {error && (
+                <p style={styles.error} data-testid="update-error-message">
+                    {error}
+                </p>
+            )}
         </div>
     );
 };

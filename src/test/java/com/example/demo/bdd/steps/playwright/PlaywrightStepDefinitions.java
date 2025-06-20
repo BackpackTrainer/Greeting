@@ -27,6 +27,9 @@ public class PlaywrightStepDefinitions {
     @Autowired
     private TestDataCleaner testDataCleaner;
 
+    //I could have combined the two @Before methods into a single method, but I wanted to keep them separate since they serve different purposes.
+    //Cucumber was having issues with two @Before methods in the same class.  The problem was solved by using the (order =).
+    // Although in this case, the order is entirely arbitrary and doesn't matter.
     @Before(order = 1)
     public void resetDatabaseBeforeEachScenario() {
         testDataCleaner.resetTestData();
@@ -135,7 +138,6 @@ public class PlaywrightStepDefinitions {
         addButton.click();
     }
 
-    // 🔥 NEW: Missing step added
     @Then("I should see the success message {string}")
     public void iShouldSeeTheSuccessMessage(String expectedSuccessMessage) {
         Locator result = page.locator("[data-testid='add-result-message']");
@@ -146,7 +148,16 @@ public class PlaywrightStepDefinitions {
         assertEquals(expectedSuccessMessage, displayedMessage);
     }
 
-    // 🔥 NEW: Missing step added (this is the second variant you have in Selenium)
+    @Then("I should see the failure message {string}")
+    public void iShouldSeeTheFailureMessage(String expectedSuccessMessage) {
+        Locator result = page.locator("[data-testid='add-error-message']");
+        result.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE));
+
+        String actualText = result.innerText();
+        String displayedMessage = stripEmojiPrefix(actualText);
+        assertEquals(expectedSuccessMessage, displayedMessage);
+    }
+
     @When("I search for {string} in the Find Greeting by Name form")
     public void iSearchForNameInTheFindGreetingByNameForm(String name) {
         Locator input = page.locator("[data-testid='find-greeting-input']");
@@ -154,4 +165,47 @@ public class PlaywrightStepDefinitions {
         Locator button = page.locator("[data-testid='find-greeting-button']");
         button.click();
     }
+
+    @When("I enter {string} and {string} in the Updating Greeting form")
+    public void iEnterNameAndGreetingInTheUpdatingGreetingForm(String name, String greeting) {
+        Locator nameInput = page.locator("[data-testid='update-name-input']");
+        Locator greetingInput = page.locator("[data-testid='update-greeting-input']");
+        Locator updateButton = page.locator("[data-testid='update-greeting-button']");
+
+        nameInput.fill(name);
+        greetingInput.fill(greeting);
+        updateButton.click();
+    }
+
+    @Then("I should see the greeting successfully updated message {string}")
+    public void iShouldSeeTheGreetingSuccessfullyUpdatedMessage(String expectedMessage) {
+        Locator result = page.locator("[data-testid='update-result-message']");
+        result.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE));
+
+        String actualText = result.innerText();
+        String displayedMessage = stripEmojiPrefix(actualText);
+        assertEquals(expectedMessage, displayedMessage);
+    }
+
+    @Then("I should see the greeting failed to update message {string}")
+    public void iShouldSeeTheGreetingFailedToUpdateMessage(String expectedMessage) {
+        Locator result = page.locator("[data-testid='update-error-message']");
+        result.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE));
+
+        String actualText = result.innerText();
+        String displayedMessage = stripEmojiPrefix(actualText);
+        assertEquals(expectedMessage, displayedMessage);
+    }
+
+
+    @Then("I should see the greeting {string} for {string}")
+    public void iShouldSeeTheGreetingForName(String expectedGreeting, String name) {
+        Locator message = page.locator("[data-testid='greeting-message']");
+        message.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE));
+
+        String actualText = message.innerText();
+        String displayedMessage = stripEmojiPrefix(actualText);
+        assertEquals(expectedGreeting, displayedMessage);
+    }
+
 }

@@ -1,13 +1,10 @@
 package com.example.demo.bdd.steps.selenium;
 
-
-import com.example.demo.bdd.config.CucumberSpringConfiguration;
 import com.example.demo.bdd.util.TestDataCleaner;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.*;
-
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.jupiter.api.Assertions;
 import org.openqa.selenium.By;
@@ -15,16 +12,13 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
 
 import static com.example.demo.bdd.util.WaitUtility.waitForElementCount;
 import static com.example.demo.bdd.util.EmojiStripper.stripEmojiPrefix;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
-
 
 public class SeleniumStepDefinitions {
 
@@ -33,9 +27,25 @@ public class SeleniumStepDefinitions {
     @Autowired
     private TestDataCleaner testDataCleaner;
 
-    //I could have combined the two @Before methods into one, but I wanted to keep them separate since they serve different purposes.
-    //Cucumber was having issues with two @Before methods in the same class.  The problem was solved by using the (order =).
-    // In this case, I really don't care about the order of the two methods.
+    // Selector constants
+    private static final By GET_ALL_MEMBERS_BUTTON = By.cssSelector("[data-testid='get-all-members']");
+    private static final By MEMBER_ROWS = By.cssSelector("[data-testid='member-row']");
+    private static final By CLEAR_BUTTON = By.cssSelector("button[data-testid='clear-display-button']");
+    private static final By FIND_NAME_INPUT = By.cssSelector("[data-testid='find-greeting-input']");
+    private static final By FIND_BUTTON = By.cssSelector("[data-testid='find-greeting-button']");
+    private static final By GREETING_MESSAGE = By.cssSelector("[data-testid='greeting-message']");
+    private static final By GREETING_ERROR = By.cssSelector("[data-testid='greeting-error']");
+    private static final By ADD_NAME_INPUT = By.cssSelector("[data-testid='add-name-input']");
+    private static final By ADD_GREETING_INPUT = By.cssSelector("[data-testid='add-greeting-input']");
+    private static final By ADD_BUTTON = By.cssSelector("[data-testid='add-greeting-button']");
+    private static final By ADD_RESULT_MESSAGE = By.cssSelector("[data-testid='add-result-message']");
+    private static final By ADD_ERROR_MESSAGE = By.cssSelector("[data-testid='add-error-message']");
+    private static final By UPDATE_NAME_INPUT = By.cssSelector("[data-testid='update-name-input']");
+    private static final By UPDATE_GREETING_INPUT = By.cssSelector("[data-testid='update-greeting-input']");
+    private static final By UPDATE_BUTTON = By.cssSelector("[data-testid='update-greeting-button']");
+    private static final By UPDATE_RESULT_MESSAGE = By.cssSelector("[data-testid='update-result-message']");
+    private static final By UPDATE_ERROR_MESSAGE = By.cssSelector("[data-testid='update-error-message']");
+
     @Before(order = 1)
     public void resetDatabaseBeforeEachScenario() {
         testDataCleaner.resetTestData();
@@ -52,6 +62,13 @@ public class SeleniumStepDefinitions {
         if (driver != null) {
             driver.quit();
         }
+    }
+
+    private void assertDisplayedMessage(By selector, String expectedMessage) {
+        waitForElementCount(driver, selector, 1);
+        WebElement element = driver.findElement(selector);
+        String displayed = stripEmojiPrefix(element.getText());
+        assertEquals(expectedMessage, displayed);
     }
 
     @Given("I have a browser open")
@@ -75,18 +92,15 @@ public class SeleniumStepDefinitions {
 
     @When("I request get all members")
     public void iRequestGetAllMembers() {
-        // This simulates a user requesting all members
-        WebElement getAllBtn = driver.findElement(By.cssSelector("[data-testid='get-all-members']"));
-        getAllBtn.click();
+        driver.findElement(GET_ALL_MEMBERS_BUTTON).click();
     }
 
     @Then("the following members should be returned:")
     public void theFollowingMembersShouldBeReturned(DataTable dataTable) {
         List<Map<String, String>> expectedRows = dataTable.asMaps(String.class, String.class);
+        waitForElementCount(driver, MEMBER_ROWS, expectedRows.size());
 
-        waitForElementCount(driver, By.cssSelector("[data-testid='member-row']"), expectedRows.size());
-
-        List<WebElement> rows = driver.findElements(By.cssSelector("[data-testid='member-row']"));
+        List<WebElement> rows = driver.findElements(MEMBER_ROWS);
         assertEquals(expectedRows.size(), rows.size());
 
         for (int i = 0; i < expectedRows.size(); i++) {
@@ -97,89 +111,81 @@ public class SeleniumStepDefinitions {
 
     @When("I request clear all members")
     public void iRequestClearAllMembers() {
-        WebElement clearButton = driver.findElement(By.cssSelector("button[data-testid='clear-display-button']"));
-        clearButton.click();
+        driver.findElement(CLEAR_BUTTON).click();
     }
 
     @Then("no members will be displayed")
     public void noMembersWillBeDisplayed() {
-        waitForElementCount(driver, By.cssSelector("[data-testid='member-row']"), 0);
-        int count = driver.findElements(By.cssSelector("[data-testid='member-row']")).size();
+        waitForElementCount(driver, MEMBER_ROWS, 0);
+        int count = driver.findElements(MEMBER_ROWS).size();
         assertEquals(0, count);
     }
 
-    @And("I enter {string} in the Find Greeting by name search field")
+    @When("I enter {string} in the Find Greeting by name search field")
     public void iEnterNameInTheFindGreetingByNameSearchField(String name) {
-        WebElement input = driver.findElement(By.cssSelector("[data-testid='find-greeting-input']"));
-        input.clear();  // just in case something is already entered
+        WebElement input = driver.findElement(FIND_NAME_INPUT);
+        input.clear();
         input.sendKeys(name);
-
-        WebElement button = driver.findElement(By.cssSelector("[data-testid='find-greeting-button']"));
-        button.click();
+        driver.findElement(FIND_BUTTON).click();
     }
 
     @Then("I should see {string} in the results")
     public void iShouldSeeGreetingInTheResults(String expectedGreeting) {
-        // Wait until the greeting message is visible
-        waitForElementCount(driver, By.cssSelector("[data-testid='greeting-message']"), 1);
-
-        WebElement message = driver.findElement(By.cssSelector("[data-testid='greeting-message']"));
-        String displayedGreeting = message.getText();
-
-        // Strip off the 💬 if you don't want to include it in the feature file
-        //String displayedGreeting = actualText.replace("💬 ", "").trim();
-        String actualGreeting = stripEmojiPrefix(displayedGreeting);
-        assertEquals(expectedGreeting, actualGreeting);
+        assertDisplayedMessage(GREETING_MESSAGE, expectedGreeting);
     }
 
     @Then("I should see this error message {string} in the results")
-    public void iShouldSeeErrorMessgaeInTheResults(String expectedGreeting) {
-        // Wait until the greeting message is visible
-        waitForElementCount(driver, By.cssSelector("[data-testid='greeting-error']"), 1);
-
-        WebElement message = driver.findElement(By.cssSelector("[data-testid='greeting-error']"));
-        String actualText = message.getText();
-
-        // Strip off the 💬 if you don't want to include it in the feature file
-        String displayedError = stripEmojiPrefix(actualText);
-        assertEquals(expectedGreeting, displayedError);
+    public void iShouldSeeErrorMessageInTheResults(String expectedErrorMessage) {
+        assertDisplayedMessage(GREETING_ERROR, expectedErrorMessage);
     }
 
     @When("I enter {string} and {string} in the Add Greeting form")
     public void iEnterNameAndGreetingInTheAddGreetingForm(String name, String greeting) {
-        WebElement nameInput = driver.findElement(By.cssSelector("[data-testid='add-name-input']"));
-        WebElement greetingInput = driver.findElement(By.cssSelector("[data-testid='add-greeting-input']"));
-        WebElement addButton = driver.findElement(By.cssSelector("[data-testid='add-greeting-button']"));
-
-        nameInput.clear();
-        nameInput.sendKeys(name);
-
-        greetingInput.clear();
-        greetingInput.sendKeys(greeting);
-
-        addButton.click();
+        driver.findElement(ADD_NAME_INPUT).clear();
+        driver.findElement(ADD_NAME_INPUT).sendKeys(name);
+        driver.findElement(ADD_GREETING_INPUT).clear();
+        driver.findElement(ADD_GREETING_INPUT).sendKeys(greeting);
+        driver.findElement(ADD_BUTTON).click();
     }
 
     @Then("I should see the success message {string}")
-    public void iShouldSeeTheSuccessMessage(String expectedSuccessMessage) {
-        waitForElementCount(driver, By.cssSelector("[data-testid='add-result-message']"), 1);
+    public void iShouldSeeTheSuccessMessage(String expectedMessage) {
+        assertDisplayedMessage(ADD_RESULT_MESSAGE, expectedMessage);
+    }
 
-        WebElement result = driver.findElement(By.cssSelector("[data-testid='add-result-message']"));
-        String actualText = result.getText();
-
-        String displayedMessage = stripEmojiPrefix(actualText);
-
-        assertEquals(expectedSuccessMessage, displayedMessage);
+    @Then("I should see the failure message {string}")
+    public void iShouldSeeTheFailureMessage(String expectedMessage) {
+        assertDisplayedMessage(ADD_ERROR_MESSAGE, expectedMessage);
     }
 
     @When("I search for {string} in the Find Greeting by Name form")
     public void iSearchForNameInTheFindGreetingByNameForm(String name) {
-        WebElement input = driver.findElement(By.cssSelector("[data-testid='find-greeting-input']"));
-        input.clear();
-        input.sendKeys(name);
+        driver.findElement(FIND_NAME_INPUT).clear();
+        driver.findElement(FIND_NAME_INPUT).sendKeys(name);
+        driver.findElement(FIND_BUTTON).click();
+    }
 
-        WebElement button = driver.findElement(By.cssSelector("[data-testid='find-greeting-button']"));
-        button.click();
+    @When("I enter {string} and {string} in the Updating Greeting form")
+    public void iEnterNameAndGreetingInTheUpdatingGreetingForm(String name, String greeting) {
+        driver.findElement(UPDATE_NAME_INPUT).clear();
+        driver.findElement(UPDATE_NAME_INPUT).sendKeys(name);
+        driver.findElement(UPDATE_GREETING_INPUT).clear();
+        driver.findElement(UPDATE_GREETING_INPUT).sendKeys(greeting);
+        driver.findElement(UPDATE_BUTTON).click();
+    }
+
+    @Then("I should see the greeting successfully updated message {string}")
+    public void iShouldSeeTheGreetingSuccessfullyUpdatedMessage(String expectedMessage) {
+        assertDisplayedMessage(UPDATE_RESULT_MESSAGE, expectedMessage);
+    }
+
+    @Then("I should see the greeting {string} for {string}")
+    public void iShouldSeeTheGreetingForName(String expectedGreeting, String name) {
+        assertDisplayedMessage(GREETING_MESSAGE, expectedGreeting);
+    }
+
+    @Then("I should see the greeting failed to update message {string}")
+    public void iShouldSeeTheGreetingFailedToUpdateMessage(String expectedMessage) {
+        assertDisplayedMessage(UPDATE_ERROR_MESSAGE, expectedMessage);
     }
 }
-

@@ -1,5 +1,6 @@
 package com.example.demo.bdd.steps.playwright;
 
+import com.example.demo.bdd.util.ScreenshotUtility;
 import com.example.demo.bdd.util.TestDataCleaner;
 import com.microsoft.playwright.*;
 import com.microsoft.playwright.options.WaitForSelectorState;
@@ -9,6 +10,8 @@ import io.cucumber.java.Before;
 import io.cucumber.java.en.*;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -158,7 +161,7 @@ public class PlaywrightStepDefinitions {
 
     @Then("I should see the greeting successfully updated message {string}")
     public void iShouldSeeTheGreetingSuccessfullyUpdatedMessage(String expectedMessage) {
-        assertMessage(UPDATE_RESULT_MESSAGE, expectedMessage);
+        assertMessage(ADD_RESULT_MESSAGE, expectedMessage);
     }
 
     @Then("I should see the greeting failed to update message {string}")
@@ -178,4 +181,30 @@ public class PlaywrightStepDefinitions {
         String actualText = locator.innerText();
         assertEquals(expectedMessage, actualText);
     }
+
+    @Then("I capture a screenshot named {string}")
+    public void captureScreenshot(String screenshotName) throws IOException {
+        ScreenshotUtility.takeScreenshotWithPlaywright(page, screenshotName);
+    }
+
+    @When("I enter {string} and {string} in the Add a New Member form")
+    public void iEnterNameAndGreetingInTheAddANewMemberForm(String name, String greeting) {
+        page.locator(ADD_NAME_INPUT).fill(name);
+        page.locator(ADD_GREETING_INPUT).fill(greeting);
+        page.locator(ADD_GREETING_BUTTON).click();
+    }
+
+    @Then("I should see the {string} error message {string}")
+    public void iShouldSeeComponentErrorMessage(String component, String expectedErrorMessage) {
+        String cssSelector;
+        switch (component.toLowerCase()) {
+            case "add" -> cssSelector = ADD_ERROR_MESSAGE;
+            case "update" -> cssSelector = UPDATE_ERROR_MESSAGE;
+            default -> throw new IllegalArgumentException("Unknown component: " + component);
+        }
+        assertMessage(cssSelector, expectedErrorMessage);
+    }
+
+
+
 }

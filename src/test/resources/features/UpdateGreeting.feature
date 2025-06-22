@@ -24,3 +24,17 @@ Feature: Updating greetings for members
       | name    | greeting  |
       | Tarzan  | Me Tarzan |
 
+  Scenario: Attempt to update greeting with missing name
+    When I enter "" and "Hello there!" in the Updating Greeting form
+    Then I should see the greeting failed to update message "Name is required."
+    And I capture a screenshot named "empty-name-validation"
+
+  Scenario: Attempt to update greeting with missing greeting message
+    When I enter "Alice" and "" in the Updating Greeting form
+    Then I should see the greeting failed to update message "Greeting message is required."
+    And I capture a screenshot named "empty-name-validation"
+
+  Scenario: Attempt to update greeting with both name and greeting missing
+    When I enter "" and "" in the Updating Greeting form
+    Then I should see the greeting failed to update message "Please enter all required information."
+    And I capture a screenshot named "empty-name-validation"

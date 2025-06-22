@@ -16,12 +16,21 @@ const GreetingUpdate = () => {
         const validName = validateField(nameField);
         const validMessage = validateField(messageField);
 
+        // Update touched state for both fields
+        setNameField(prev => ({ ...prev, touched: true }));
+        setMessageField(prev => ({ ...prev, touched: true }));
+
+        // Determine error message based on which fields are missing
+        if (!validName && !validMessage) {
+            setFeedback('');
+            setError('Please enter all required information.');
+            return;
+        }
         if (!validName) {
             setFeedback('');
             setError('Name is required.');
             return;
         }
-
         if (!validMessage) {
             setFeedback('');
             setError('Greeting message is required.');
@@ -56,7 +65,11 @@ const GreetingUpdate = () => {
     };
 
     const inputStyle = (field) => ({
-        borderColor: field.touched && !validateField(field) ? 'red' : 'black'
+        borderColor: field.touched && !validateField(field) ? 'red' : 'black',
+        borderRadius: '5px',
+        padding: '0.5rem',
+        fontSize: '1rem',
+        width: '100%'
     });
 
     const handleFieldChange = (setter) => (e) => {
@@ -64,35 +77,52 @@ const GreetingUpdate = () => {
     };
 
     return (
-        <div>
-            <h2>Update Greeting</h2>
-            <div>
-                <label>Name:</label>
+        <div style={{
+            backgroundColor: '#DFF2BF',
+            padding: '1rem',
+            margin: '1rem',
+            borderRadius: '10px',
+            boxShadow: '2px 2px 10px #ccc',
+        }}>
+            <h2 style={{ textAlign: 'center' }}>Update Greeting</h2>
+
+            <div style={{ marginBottom: '1rem' }}>
                 <input
                     type="text"
                     value={nameField.value}
                     onChange={handleFieldChange(setNameField)}
                     style={inputStyle(nameField)}
+                    placeholder="Name"
                     data-testid="update-name-input"
                 />
             </div>
-            <div>
-                <label>Greeting:</label>
+
+            <div style={{ display: 'flex', alignItems: 'center' }}>
                 <input
                     type="text"
                     value={messageField.value}
                     onChange={handleFieldChange(setMessageField)}
                     style={inputStyle(messageField)}
+                    placeholder="Greeting message"
                     data-testid="update-greeting-input"
                 />
+                <button
+                    onClick={handleUpdate}
+                    data-testid="update-greeting-button"
+                    style={{
+                        backgroundColor: '#4CAF50',
+                        color: 'white',
+                        padding: '0.5rem 1rem',
+                        border: 'none',
+                        borderRadius: '5px',
+                        cursor: 'pointer',
+                        fontWeight: 'bold',
+                        marginLeft: '1rem'
+                    }}
+                >
+                    Update
+                </button>
             </div>
-            <button
-                onClick={handleUpdate}
-                data-testid="update-greeting-button"
-                style={{ backgroundColor: '#ffa500', padding: '8px', marginTop: '10px' }}
-            >
-                Update
-            </button>
 
             {feedback && <p style={{ color: 'green' }} data-testid="add-result-message">{feedback}</p>}
             {error && <p style={{ color: 'red' }} data-testid="update-error-message">{error}</p>}

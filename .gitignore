@@ -48,3 +48,7 @@ Desktop.ini
 *.sqlite
 *.h2.db
 *.mv.db
+
+# Ignore screenshots
+/screenshots/
+

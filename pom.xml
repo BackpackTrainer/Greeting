@@ -128,9 +128,9 @@
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-java</artifactId>
-            <version>4.20.0</version>
-            <scope>test</scope>
+            <version>4.25.0</version>
         </dependency>
+
 
         <dependency>
             <groupId>io.github.bonigarcia</groupId>

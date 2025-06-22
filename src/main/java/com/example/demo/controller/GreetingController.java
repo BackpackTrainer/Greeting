@@ -31,13 +31,10 @@ public class GreetingController {
         }
     }
 
-
-
     @GetMapping("/all")
     public List<GreetingDto> getAllGreetings() {
         return greetingService.findAllGreetings();
     }
-
 
     @PostMapping
     public GreetingDto saveGreeting(@RequestBody GreetingDto dto) {
@@ -54,12 +51,15 @@ public class GreetingController {
     }
 
     @PutMapping
-    public ResponseEntity<GreetingDto> updateGreeting(@RequestBody GreetingDto dto) {
+    public ResponseEntity<?> updateGreeting(@RequestBody GreetingDto dto) {
         Optional<GreetingDto> updated = greetingService.updateGreeting(dto);
-        return updated
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+        if (updated.isPresent()) {
+            return ResponseEntity.ok(updated.get());
+        } else {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body("No update made. " + dto.getName() + " is not a member.");
+        }
     }
-
 
 }

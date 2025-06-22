@@ -1,15 +1,30 @@
 import React, { useState } from 'react';
 
 const GreetingUpdate = () => {
-    const [name, setName] = useState('');
-    const [message, setMessage] = useState('');
+    const [nameField, setNameField] = useState({ value: '', touched: false });
+    const [messageField, setMessageField] = useState({ value: '', touched: false });
     const [feedback, setFeedback] = useState('');
     const [error, setError] = useState('');
 
+    const validateField = (field) => {
+        return field.value.trim() !== '';
+    };
+
     const handleUpdate = async () => {
-        if (!name.trim() || !message.trim()) {
-            setError('Name and message cannot be empty.');
+        console.log("handleUpdate() function invoked");
+
+        const validName = validateField(nameField);
+        const validMessage = validateField(messageField);
+
+        if (!validName) {
             setFeedback('');
+            setError('Name is required.');
+            return;
+        }
+
+        if (!validMessage) {
+            setFeedback('');
+            setError('Greeting message is required.');
             return;
         }
 
@@ -17,102 +32,72 @@ const GreetingUpdate = () => {
             const response = await fetch('/greet', {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name, message }),
+                body: JSON.stringify({ name: nameField.value, message: messageField.value }),
             });
 
             if (response.ok) {
-                const data = await response.json();
-                setFeedback(`✅ Greeting for ${data.name} was successfully updated.`);
+                const result = await response.json();
+                console.log("Update successful:", result);
+                setFeedback(`Greeting for ${result.name} was successfully updated.`);
                 setError('');
             } else if (response.status === 404) {
+                const errorMessage = await response.text();
+                setError(errorMessage);
                 setFeedback('');
-                setError(`❌ No update made: Member "${name}" was not found in the database.`);
             } else {
-                throw new Error(`Unexpected status: ${response.status}`);
+                setError(`Unexpected status: ${response.status}`);
+                setFeedback('');
             }
         } catch (err) {
+            console.error("An unexpected error occurred:", err);
+            setError("An unexpected error occurred.");
             setFeedback('');
-            setError(`An error occurred: ${err.message}`);
         }
     };
 
+    const inputStyle = (field) => ({
+        borderColor: field.touched && !validateField(field) ? 'red' : 'black'
+    });
+
+    const handleFieldChange = (setter) => (e) => {
+        setter({ value: e.target.value, touched: true });
+    };
+
     return (
-        <div style={styles.container}>
+        <div>
             <h2>Update Greeting</h2>
-            <input
-                type="text"
-                placeholder="Enter member name..."
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                style={styles.input}
-                data-testid="update-name-input"
-            />
-            <input
-                type="text"
-                placeholder="Enter new greeting..."
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                style={styles.input}
-                data-testid="update-greeting-input"
-            />
+            <div>
+                <label>Name:</label>
+                <input
+                    type="text"
+                    value={nameField.value}
+                    onChange={handleFieldChange(setNameField)}
+                    style={inputStyle(nameField)}
+                    data-testid="update-name-input"
+                />
+            </div>
+            <div>
+                <label>Greeting:</label>
+                <input
+                    type="text"
+                    value={messageField.value}
+                    onChange={handleFieldChange(setMessageField)}
+                    style={inputStyle(messageField)}
+                    data-testid="update-greeting-input"
+                />
+            </div>
             <button
                 onClick={handleUpdate}
-                style={styles.button}
                 data-testid="update-greeting-button"
+                style={{ backgroundColor: '#ffa500', padding: '8px', marginTop: '10px' }}
             >
                 Update
             </button>
 
-            {feedback && (
-                <p style={styles.feedback} data-testid="update-result-message">
-                    {feedback}
-                </p>
-            )}
-            {error && (
-                <p style={styles.error} data-testid="update-error-message">
-                    {error}
-                </p>
-            )}
+            {feedback && <p style={{ color: 'green' }} data-testid="add-result-message">{feedback}</p>}
+            {error && <p style={{ color: 'red' }} data-testid="update-error-message">{error}</p>}
         </div>
     );
-};
-
-const styles = {
-    container: {
-        background: '#fff8dc',
-        padding: '1rem',
-        margin: '1rem',
-        borderRadius: '10px',
-        boxShadow: '2px 2px 10px #ccc',
-        textAlign: 'center',
-    },
-    input: {
-        padding: '0.5rem',
-        margin: '0.5rem',
-        borderRadius: '5px',
-        border: '1px solid #ccc',
-        width: '80%',
-        fontSize: '1rem',
-    },
-    button: {
-        padding: '0.5rem 1rem',
-        background: '#ffa500',
-        color: '#fff',
-        border: 'none',
-        borderRadius: '5px',
-        cursor: 'pointer',
-        fontWeight: 'bold',
-    },
-    feedback: {
-        marginTop: '1rem',
-        color: 'green',
-        fontWeight: 'bold',
-    },
-    error: {
-        marginTop: '1rem',
-        color: 'red',
-        fontWeight: 'bold',
-    },
 };
 
 export default GreetingUpdate;

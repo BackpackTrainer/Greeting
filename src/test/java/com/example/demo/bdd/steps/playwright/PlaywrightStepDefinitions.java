@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static com.example.demo.bdd.util.EmojiStripper.stripEmojiPrefix;
+
 
 public class PlaywrightStepDefinitions {
 
@@ -176,7 +176,6 @@ public class PlaywrightStepDefinitions {
         Locator locator = page.locator(cssSelector);
         locator.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE));
         String actualText = locator.innerText();
-        String displayedMessage = stripEmojiPrefix(actualText);
-        assertEquals(expectedMessage, displayedMessage);
+        assertEquals(expectedMessage, actualText);
     }
 }

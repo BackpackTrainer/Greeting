@@ -41,7 +41,7 @@ const GreetingList = () => {
 
             {error && (
                 <p style={styles.error} data-testid="error-message">
-                    ❌ {error}
+                    {error}
                 </p>
             )}
 

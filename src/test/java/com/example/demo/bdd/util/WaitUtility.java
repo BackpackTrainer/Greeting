@@ -4,7 +4,6 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -13,12 +12,11 @@ import java.util.List;
 
 public class WaitUtility {
 
-    // Default text wait method (backward compatible)
     public static void waitUntilTextContains(WebDriver driver, By locator, String expectedText) {
-        waitUntilTextContains(driver, locator, expectedText, 5); // default timeout 5 seconds
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+        wait.until(ExpectedConditions.textToBePresentInElementLocated(locator, expectedText));
     }
 
-    // Overloaded text wait with debug
     public static void waitUntilTextContains(WebDriver driver, By locator, String expectedText, int timeoutInSeconds) {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(timeoutInSeconds));
         try {
@@ -33,12 +31,36 @@ public class WaitUtility {
         }
     }
 
-    // Element count wait (this was missing)
+
+    public static void waitUntilVisible(WebDriver driver, By locator) {
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+        wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
+    }
+
     public static void waitForElementCount(WebDriver driver, By locator, int expectedCount) {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
         wait.until((WebDriver d) -> {
             List<WebElement> elements = d.findElements(locator);
             return elements.size() == expectedCount;
+        });
+    }
+    public static void waitUntilClickable(WebDriver driver, By locator) {
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+        wait.until(ExpectedConditions.elementToBeClickable(locator));
+    }
+
+
+    // 🆕 NEW METHOD:
+    public static void waitUntilOneIsVisible(WebDriver driver, By... locators) {
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+        wait.until(driver1 -> {
+            for (By locator : locators) {
+                List<WebElement> elements = driver1.findElements(locator);
+                if (!elements.isEmpty() && elements.get(0).isDisplayed()) {
+                    return true;
+                }
+            }
+            return false;
         });
     }
 }

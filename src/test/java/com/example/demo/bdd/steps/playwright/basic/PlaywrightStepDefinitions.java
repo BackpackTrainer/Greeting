@@ -1,4 +1,4 @@
-package com.example.demo.bdd.steps.playwright;
+package com.example.demo.bdd.steps.playwright.basic;
 
 import com.example.demo.bdd.util.ScreenshotUtility;
 import com.example.demo.bdd.util.TestDataCleaner;

@@ -1,4 +1,4 @@
-package com.example.demo.bdd.steps.selenium;
+package com.example.demo.bdd.steps.selenium.basic;
 
 import com.example.demo.bdd.util.ScreenshotUtility;
 import com.example.demo.bdd.util.SeleniumElementUtils;

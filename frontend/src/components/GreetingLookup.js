@@ -6,7 +6,7 @@ const GreetingLookup = () => {
     const nameField = useValidatedInput('');
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
-    const [errorType, setErrorType] = useState(''); // New state to track which error it is
+    const [errorType, setErrorType] = useState('');
 
     const fetchGreeting = async () => {
         const isValid = nameField.validate();
@@ -45,10 +45,16 @@ const GreetingLookup = () => {
                 style={inputStyle(nameField.hasError)}
                 data-testid="find-greeting-input"
             />
-            <button onClick={fetchGreeting} style={buttonStyle('#4CAF50')} data-testid="find-greeting-button">
+            <button
+                onClick={fetchGreeting}
+                style={buttonStyle('#4CAF50')}
+                data-testid="find-greeting-button"
+            >
                 Get Greeting
             </button>
+
             {message && <p style={messageStyle} data-testid="greeting-message">{message}</p>}
+
             {error && (
                 <p
                     style={errorStyle}

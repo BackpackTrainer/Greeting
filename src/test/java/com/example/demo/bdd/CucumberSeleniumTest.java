@@ -8,7 +8,7 @@ import org.junit.platform.suite.api.*;
 @ConfigurationParameter(key = "cucumber.plugin", value = "pretty")
 @ConfigurationParameter(
         key = "cucumber.glue",
-        value = "com.example.demo.bdd.steps.selenium,com.example.demo.bdd.config"
+        value = "com.example.demo.bdd.steps.selenium.basic,com.example.demo.bdd.config"
 )
 public class CucumberSeleniumTest {
 }

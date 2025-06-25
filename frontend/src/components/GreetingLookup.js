@@ -6,19 +6,17 @@ const GreetingLookup = () => {
     const nameField = useValidatedInput('');
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
-    const [errorType, setErrorType] = useState('');
 
     const fetchGreeting = async () => {
         const isValid = nameField.validate();
         if (!isValid) {
             setError("Name field may not be empty.");
-            setErrorType('update');
             setMessage('');
             return;
         }
 
         setError('');
-        setErrorType('');
+        setMessage('');
 
         try {
             const response = await fetch(`/greet/${nameField.value}`);
@@ -28,9 +26,7 @@ const GreetingLookup = () => {
             const text = await response.text();
             setMessage(text);
         } catch (err) {
-            setMessage('');
             setError(`${nameField.value} is not currently a member. Use the Add a New Member function if you would like to add them.`);
-            setErrorType('update');
         }
     };
 
@@ -53,20 +49,8 @@ const GreetingLookup = () => {
                 Get Greeting
             </button>
 
-            {message && <p style={messageStyle} data-testid="greeting-message">{message}</p>}
-
-            {error && (
-                <p
-                    style={errorStyle}
-                    data-testid={
-                        errorType === 'update'
-                            ? 'update-error-message'
-                            : 'greeting-error'
-                    }
-                >
-                    {error}
-                </p>
-            )}
+            {message && <p style={messageStyle} data-testid="result-message">{message}</p>}
+            {error && <p style={errorStyle} data-testid="error-message">{error}</p>}
         </div>
     );
 };

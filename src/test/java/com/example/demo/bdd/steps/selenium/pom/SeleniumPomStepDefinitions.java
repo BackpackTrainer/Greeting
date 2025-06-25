@@ -67,12 +67,12 @@ public class SeleniumPomStepDefinitions {
         }
         driver.get(url);
     }
+
     @Then("I am on the {string} page")
     public void i_am_on_the_page(String expectedTitle) {
-        String actualTitle = homePage.getPageTitle();  // or any other page object you injected
+        String actualTitle = homePage.getPageTitle();
         assertEquals(expectedTitle, actualTitle, "Page title mismatch");
     }
-
 
     @When("I enter {string} and {string} in the Add a New Member form")
     public void iEnterNameAndGreetingInTheAddANewMemberForm(String name, String greeting) {
@@ -174,13 +174,11 @@ public class SeleniumPomStepDefinitions {
         findGreetingPage.submit();
     }
 
-
     @Then("I should see the greeting {string} for {string}")
     public void iShouldSeeTheGreetingForName(String expectedGreeting, String name) {
         String actualMessage = findGreetingPage.getGreetingMessage();
         assertEquals(expectedGreeting, actualMessage, "Greeting message mismatch for name: " + name);
     }
-
 
     @Then("I capture a screenshot named {string}")
     public void captureScreenshot(String screenshotName) throws IOException {

@@ -1,4 +1,4 @@
-@WhatImWorkingOnNow
+
 Feature:  Find Greeting By Name
   In order to find a greeting by name
   As a user

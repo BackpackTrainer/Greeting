@@ -10,8 +10,8 @@ public class AddMemberPage {
     private final By NAME_INPUT = By.cssSelector("[data-testid='add-name-input']");
     private final By GREETING_INPUT = By.cssSelector("[data-testid='add-greeting-input']");
     private final By ADD_BUTTON = By.cssSelector("[data-testid='add-greeting-button']");
-    private final By SUCCESS_MESSAGE = By.cssSelector("[data-testid='add-result-message']");
-    private final By ERROR_MESSAGE = By.cssSelector("[data-testid='add-error-message']");
+    private final By RESULT_MESSAGE = By.cssSelector("[data-testid='result-message']");
+    private final By ERROR_MESSAGE = By.cssSelector("[data-testid='error-message']");
 
     public AddMemberPage(WebDriver driver) {
         this.driver = driver;
@@ -32,8 +32,8 @@ public class AddMemberPage {
     }
 
     public String getSuccessMessage() {
-        WaitUtility.waitUntilVisible(driver, SUCCESS_MESSAGE);
-        return driver.findElement(SUCCESS_MESSAGE).getText();
+        WaitUtility.waitUntilVisible(driver, RESULT_MESSAGE);
+        return driver.findElement(RESULT_MESSAGE).getText();
     }
 
     public String getErrorMessage() {

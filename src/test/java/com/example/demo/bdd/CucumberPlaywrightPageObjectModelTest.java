@@ -11,7 +11,7 @@ import org.junit.platform.suite.api.Suite;
 @ConfigurationParameter(key = "cucumber.plugin", value = "pretty")
 @ConfigurationParameter(
         key = "cucumber.glue",
-        value = "com.example.demo.bdd.steps.playwright.basic,com.example.demo.bdd.config"
+        value = "com.example.demo.bdd.steps.playwright.pom,com.example.demo.bdd.config"
 )
-public class CucumberPlaywrightTest {
+public class CucumberPlaywrightPageObjectModelTest {
 }

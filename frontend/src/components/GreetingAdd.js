@@ -63,8 +63,8 @@ const GreetingAdd = () => {
             <button onClick={handleSubmit} style={buttonStyle()} data-testid="add-greeting-button">
                 Add Greeting
             </button>
-            {result && <p style={messageStyle} data-testid="add-result-message">{result}</p>}
-            {error && <p style={errorStyle} data-testid="add-error-message">{error}</p>}
+            {result && <p style={messageStyle} data-testid="result-message">{result}</p>}
+            {error && <p style={errorStyle} data-testid="error-message">{error}</p>}
         </div>
     );
 };

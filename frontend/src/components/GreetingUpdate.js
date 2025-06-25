@@ -11,8 +11,6 @@ const GreetingUpdate = () => {
     };
 
     const handleUpdate = async () => {
-        console.log("handleUpdate() function invoked");
-
         const validName = validateField(nameField);
         const validMessage = validateField(messageField);
 
@@ -58,7 +56,6 @@ const GreetingUpdate = () => {
                 setFeedback('');
             }
         } catch (err) {
-            console.error("An unexpected error occurred:", err);
             setError("An unexpected error occurred.");
             setFeedback('');
         }
@@ -124,8 +121,8 @@ const GreetingUpdate = () => {
                 </button>
             </div>
 
-            {feedback && <p style={{ color: 'green' }} data-testid="add-result-message">{feedback}</p>}
-            {error && <p style={{ color: 'red' }} data-testid="update-error-message">{error}</p>}
+            {feedback && <p style={{ color: 'green' }} data-testid="result-message">{feedback}</p>}
+            {error && <p style={{ color: 'red' }} data-testid="error-message">{error}</p>}
         </div>
     );
 };

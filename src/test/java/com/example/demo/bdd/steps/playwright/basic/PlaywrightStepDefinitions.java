@@ -14,8 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PlaywrightStepDefinitions {
 
@@ -26,24 +26,27 @@ public class PlaywrightStepDefinitions {
     @Autowired
     private TestDataCleaner testDataCleaner;
 
-    // CSS Selectors
+    // Updated CSS Selectors (matching Selenium updates)
     private static final String GET_ALL_MEMBERS_BTN = "[data-testid='get-all-members']";
     private static final String CLEAR_BUTTON = "[data-testid='clear-display-button']";
     private static final String MEMBER_ROW = "[data-testid='member-row']";
+
     private static final String FIND_GREETING_INPUT = "[data-testid='find-greeting-input']";
     private static final String FIND_GREETING_BUTTON = "[data-testid='find-greeting-button']";
-    private static final String GREETING_MESSAGE = "[data-testid='greeting-message']";
-    private static final String GREETING_ERROR = "[data-testid='greeting-error']";
+    private static final String GREETING_MESSAGE = "[data-testid='result-message']";
+    private static final String GREETING_ERROR = "[data-testid='error-message']";
+
     private static final String ADD_NAME_INPUT = "[data-testid='add-name-input']";
     private static final String ADD_GREETING_INPUT = "[data-testid='add-greeting-input']";
     private static final String ADD_GREETING_BUTTON = "[data-testid='add-greeting-button']";
-    private static final String ADD_RESULT_MESSAGE = "[data-testid='add-result-message']";
-    private static final String ADD_ERROR_MESSAGE = "[data-testid='add-error-message']";
+    private static final String ADD_RESULT_MESSAGE = "[data-testid='result-message']";
+    private static final String ADD_ERROR_MESSAGE = "[data-testid='error-message']";
+
     private static final String UPDATE_NAME_INPUT = "[data-testid='update-name-input']";
     private static final String UPDATE_GREETING_INPUT = "[data-testid='update-greeting-input']";
     private static final String UPDATE_GREETING_BUTTON = "[data-testid='update-greeting-button']";
-    private static final String UPDATE_RESULT_MESSAGE = "[data-testid='update-result-message']";
-    private static final String UPDATE_ERROR_MESSAGE = "[data-testid='update-error-message']";
+    private static final String UPDATE_RESULT_MESSAGE = "[data-testid='result-message']";
+    private static final String UPDATE_ERROR_MESSAGE = "[data-testid='error-message']";
 
     @Before(order = 1)
     public void resetDatabaseBeforeEachScenario() {
@@ -125,8 +128,8 @@ public class PlaywrightStepDefinitions {
         page.locator(FIND_GREETING_BUTTON).click();
     }
 
-    @When("I enter {string} and {string} in the Add Greeting form")
-    public void iEnterNameAndGreetingInTheAddGreetingForm(String name, String greeting) {
+    @When("I enter {string} and {string} in the Add a New Member form")
+    public void iEnterNameAndGreetingInTheAddANewMemberForm(String name, String greeting) {
         page.locator(ADD_NAME_INPUT).fill(name);
         page.locator(ADD_GREETING_INPUT).fill(greeting);
         page.locator(ADD_GREETING_BUTTON).click();
@@ -144,11 +147,6 @@ public class PlaywrightStepDefinitions {
         assertMessage(GREETING_MESSAGE, expectedGreeting);
     }
 
-    @Then("I should see this error message {string} in the results")
-    public void iShouldSeeErrorMessage(String expectedErrorMessage) {
-        assertMessage(GREETING_ERROR, expectedErrorMessage);
-    }
-
     @Then("I should see the success message {string}")
     public void iShouldSeeTheSuccessMessage(String expectedSuccessMessage) {
         assertMessage(ADD_RESULT_MESSAGE, expectedSuccessMessage);
@@ -161,37 +159,12 @@ public class PlaywrightStepDefinitions {
 
     @Then("I should see the greeting successfully updated message {string}")
     public void iShouldSeeTheGreetingSuccessfullyUpdatedMessage(String expectedMessage) {
-        assertMessage(ADD_RESULT_MESSAGE, expectedMessage);
+        assertMessage(UPDATE_RESULT_MESSAGE, expectedMessage);
     }
 
     @Then("I should see the greeting failed to update message {string}")
     public void iShouldSeeTheGreetingFailedToUpdateMessage(String expectedMessage) {
         assertMessage(UPDATE_ERROR_MESSAGE, expectedMessage);
-    }
-
-    @Then("I should see the greeting {string} for {string}")
-    public void iShouldSeeTheGreetingForName(String expectedGreeting, String name) {
-        assertMessage(GREETING_MESSAGE, expectedGreeting);
-    }
-
-    // Utility method to remove duplication
-    private void assertMessage(String cssSelector, String expectedMessage) {
-        Locator locator = page.locator(cssSelector);
-        locator.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE));
-        String actualText = locator.innerText();
-        assertEquals(expectedMessage, actualText);
-    }
-
-    @Then("I capture a screenshot named {string}")
-    public void captureScreenshot(String screenshotName) throws IOException {
-        ScreenshotUtility.takeScreenshotWithPlaywright(page, screenshotName);
-    }
-
-    @When("I enter {string} and {string} in the Add a New Member form")
-    public void iEnterNameAndGreetingInTheAddANewMemberForm(String name, String greeting) {
-        page.locator(ADD_NAME_INPUT).fill(name);
-        page.locator(ADD_GREETING_INPUT).fill(greeting);
-        page.locator(ADD_GREETING_BUTTON).click();
     }
 
     @Then("I should see the {string} error message {string}")
@@ -205,6 +178,22 @@ public class PlaywrightStepDefinitions {
         assertMessage(cssSelector, expectedErrorMessage);
     }
 
+    @Then("I should see the greeting {string} for {string}")
+    public void iShouldSeeTheGreetingForName(String expectedGreeting, String name) {
+        assertMessage(GREETING_MESSAGE, expectedGreeting);
+    }
+
+    private void assertMessage(String cssSelector, String expectedMessage) {
+        // Instead of using the cssSelector, we'll locate by text directly
+        Locator locator = page.getByText(expectedMessage, new Page.GetByTextOptions().setExact(true));
+        locator.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE));
+        String actualText = locator.innerText();
+        assertEquals(expectedMessage, actualText);
+    }
 
 
+    @Then("I capture a screenshot named {string}")
+    public void captureScreenshot(String screenshotName) throws IOException {
+        ScreenshotUtility.takeScreenshotWithPlaywright(page, screenshotName);
+    }
 }

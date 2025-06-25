@@ -3,7 +3,6 @@ package com.example.demo.bdd.pages.selenium;
 import com.example.demo.bdd.util.WaitUtility;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 
 public class FindGreetingPage {
 
@@ -12,8 +11,8 @@ public class FindGreetingPage {
     // Locators
     private static final By NAME_INPUT = By.cssSelector("[data-testid='find-greeting-input']");
     private static final By SUBMIT_BUTTON = By.cssSelector("[data-testid='find-greeting-button']");
-    private static final By GREETING_MESSAGE = By.cssSelector("[data-testid='greeting-message']");
-    private static final By ERROR_MESSAGE = By.cssSelector("[data-testid='update-error-message']");
+    private static final By RESULT_MESSAGE = By.cssSelector("[data-testid='result-message']");
+    private static final By ERROR_MESSAGE = By.cssSelector("[data-testid='error-message']");
 
     public FindGreetingPage(WebDriver driver) {
         this.driver = driver;
@@ -27,12 +26,12 @@ public class FindGreetingPage {
     public void submit() {
         WaitUtility.waitUntilClickable(driver, SUBMIT_BUTTON);
         driver.findElement(SUBMIT_BUTTON).click();
-        WaitUtility.waitUntilOneIsVisible(driver, GREETING_MESSAGE, ERROR_MESSAGE);
+        WaitUtility.waitUntilOneIsVisible(driver, RESULT_MESSAGE, ERROR_MESSAGE);
     }
 
     public String getGreetingMessage() {
-        WaitUtility.waitUntilVisible(driver, GREETING_MESSAGE);
-        return driver.findElement(GREETING_MESSAGE).getText();
+        WaitUtility.waitUntilVisible(driver, RESULT_MESSAGE);
+        return driver.findElement(RESULT_MESSAGE).getText();
     }
 
     public String getErrorMessage() {

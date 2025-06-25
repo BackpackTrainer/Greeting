@@ -11,8 +11,8 @@ public class AddMemberPage {
     private static final String NAME_INPUT = "[data-testid='add-name-input']";
     private static final String GREETING_INPUT = "[data-testid='add-greeting-input']";
     private static final String SUBMIT_BUTTON = "[data-testid='add-greeting-button']";
-    private static final String SUCCESS_MESSAGE = "[data-testid='result-message']";
-    private static final String ERROR_MESSAGE = "[data-testid='error-message']";
+    private static final String SUCCESS_MESSAGE = "[data-testid='add-result-message']";
+    private static final String ERROR_MESSAGE = "[data-testid='add-error-message']";
 
     public AddMemberPage(Page page) {
         this.page = page;

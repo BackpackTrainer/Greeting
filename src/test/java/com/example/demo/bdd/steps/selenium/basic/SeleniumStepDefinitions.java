@@ -43,8 +43,13 @@ public class SeleniumStepDefinitions {
     private static final By UPDATE_GREETING_INPUT = By.cssSelector("[data-testid='update-greeting-input']");
     private static final By UPDATE_GREETING_BUTTON = By.cssSelector("[data-testid='update-greeting-button']");
 
-    private static final By RESULT_MESSAGE = By.cssSelector("[data-testid='result-message']");
-    private static final By ERROR_MESSAGE = By.cssSelector("[data-testid='error-message']");
+    private static final By UPDATE_RESULT_MESSAGE = By.cssSelector("[data-testid='update-result-message']");
+    private static final By UPDATE_ERROR_MESSAGE = By.cssSelector("[data-testid='update-error-message']");
+
+    private static final By FIND_RESULT_MESSAGE = By.cssSelector("[data-testid='find-result-message']");
+
+    private static final By ADD_ERROR_MESSAGE = By.cssSelector("[data-testid='add-error-message']");
+    private static final By ADD_RESULT_MESSAGE = By.cssSelector("[data-testid='add-result-message']");
 
     @Before(order = 1)
     public void resetDatabaseBeforeEachScenario() {
@@ -150,52 +155,61 @@ public class SeleniumStepDefinitions {
 
     @Then("I should see the success message {string}")
     public void iShouldSeeTheSuccessMessage(String expectedMessage) {
-        WaitUtility.waitUntilTextContains(driver, RESULT_MESSAGE, expectedMessage);
-        WebElement element = driver.findElement(RESULT_MESSAGE);
+        WaitUtility.waitUntilTextContains(driver, ADD_RESULT_MESSAGE, expectedMessage);
+        WebElement element = driver.findElement(ADD_RESULT_MESSAGE);
         assertEquals(expectedMessage, element.getText());
     }
 
     @Then("I should see the greeting successfully updated message {string}")
     public void iShouldSeeTheGreetingSuccessfullyUpdatedMessage(String expectedMessage) {
-        WaitUtility.waitUntilTextContains(driver, RESULT_MESSAGE, expectedMessage);
-        WebElement element = driver.findElement(RESULT_MESSAGE);
+        WaitUtility.waitUntilTextContains(driver, UPDATE_RESULT_MESSAGE, expectedMessage);
+        WebElement element = driver.findElement(UPDATE_RESULT_MESSAGE);
         assertEquals(expectedMessage, element.getText());
     }
 
     @Then("I should see the failure message {string}")
     public void iShouldSeeTheFailureMessage(String expectedMessage) {
-        WaitUtility.waitUntilTextContains(driver, ERROR_MESSAGE, expectedMessage);
-        WebElement element = driver.findElement(ERROR_MESSAGE);
+        WaitUtility.waitUntilTextContains(driver, ADD_ERROR_MESSAGE, expectedMessage);
+        WebElement element = driver.findElement(ADD_ERROR_MESSAGE);
         assertEquals(expectedMessage, element.getText());
     }
+
 
     @Then("I should see the greeting failed to update message {string}")
     public void iShouldSeeTheGreetingFailedToUpdateMessage(String expectedMessage) {
-        WaitUtility.waitUntilTextContains(driver, ERROR_MESSAGE, expectedMessage);
-        WebElement element = driver.findElement(ERROR_MESSAGE);
+        WaitUtility.waitUntilTextContains(driver, UPDATE_ERROR_MESSAGE, expectedMessage);
+        WebElement element = driver.findElement(UPDATE_ERROR_MESSAGE);
         assertEquals(expectedMessage, element.getText());
     }
 
-    @Then("I should see the {string} error message {string}")
-    public void iShouldSeeComponentErrorMessage(String component, String expectedErrorMessage) {
-        WaitUtility.waitUntilTextContains(driver, ERROR_MESSAGE, expectedErrorMessage);
-        WebElement element = driver.findElement(ERROR_MESSAGE);
+    @Then("I should see the add error message {string}")
+    public void iShouldSeeTheAddErrorMessage(String expectedErrorMessage) {
+        WaitUtility.waitUntilTextContains(driver, ADD_ERROR_MESSAGE, expectedErrorMessage);
+        WebElement element = driver.findElement(ADD_ERROR_MESSAGE);
         assertEquals(expectedErrorMessage, element.getText());
     }
 
     @Then("I should see {string} in the results")
     public void iShouldSeeGreetingInTheResults(String expectedGreeting) {
-        WaitUtility.waitUntilTextContains(driver, RESULT_MESSAGE, expectedGreeting);
-        WebElement element = driver.findElement(RESULT_MESSAGE);
+        WaitUtility.waitUntilTextContains(driver, FIND_RESULT_MESSAGE, expectedGreeting);
+        WebElement element = driver.findElement(FIND_RESULT_MESSAGE);
         assertEquals(expectedGreeting, element.getText());
     }
 
     @Then("I should see the greeting {string} for {string}")
     public void iShouldSeeTheGreetingForName(String expectedGreeting, String name) {
-        WaitUtility.waitUntilTextContains(driver, RESULT_MESSAGE, expectedGreeting);
-        WebElement element = driver.findElement(RESULT_MESSAGE);
+        WaitUtility.waitUntilTextContains(driver, FIND_RESULT_MESSAGE, expectedGreeting);
+        WebElement element = driver.findElement(FIND_RESULT_MESSAGE);
         assertEquals(expectedGreeting, element.getText());
     }
+    @Then("I should see the find error message {string}")
+    public void iShouldSeeTheFindErrorMessage(String expectedErrorMessage) {
+        By FIND_ERROR_MESSAGE = By.cssSelector("[data-testid='find-error-message']");
+        WaitUtility.waitUntilTextContains(driver, FIND_ERROR_MESSAGE, expectedErrorMessage);
+        WebElement element = driver.findElement(FIND_ERROR_MESSAGE);
+        assertEquals(expectedErrorMessage, element.getText());
+    }
+
 
     @Then("I capture a screenshot named {string}")
     public void captureScreenshot(String screenshotName) throws IOException {

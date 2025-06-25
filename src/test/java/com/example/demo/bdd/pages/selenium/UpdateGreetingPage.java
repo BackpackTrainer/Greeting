@@ -10,8 +10,8 @@ public class UpdateGreetingPage {
     private final By NAME_INPUT = By.cssSelector("[data-testid='update-name-input']");
     private final By GREETING_INPUT = By.cssSelector("[data-testid='update-greeting-input']");
     private final By UPDATE_BUTTON = By.cssSelector("[data-testid='update-greeting-button']");
-    private final By SUCCESS_MESSAGE = By.cssSelector("[data-testid='result-message']");
-    private final By ERROR_MESSAGE = By.cssSelector("[data-testid='error-message']");
+    private final By SUCCESS_MESSAGE = By.cssSelector("[data-testid='update-result-message']");
+    private final By ERROR_MESSAGE = By.cssSelector("[data-testid='update-error-message']");
 
     public UpdateGreetingPage(WebDriver driver) {
         this.driver = driver;

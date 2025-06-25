@@ -32,17 +32,17 @@ Feature: Add a new member and verify greeting
 
   Scenario: Submitting with an empty name should display validation error
     And I enter "" and "Some greeting" in the Add a New Member form
-    Then I should see the "add" error message "Please enter all required information."
+    Then I should see the add error message "Please enter all required information."
     And I capture a screenshot named "empty-name-validation"
 
 
   Scenario: Submitting with an empty greeting should display validation error
     And I enter "Fred" and "" in the Add a New Member form
-    Then I should see the "add" error message "Please enter all required information."
+    Then I should see the add error message "Please enter all required information."
     And I capture a screenshot named "empty-greeting-validation"
 
 
   Scenario: Submitting with empty name and an empty greeting should display validation errors
     And I enter "" and "" in the Add a New Member form
-    Then I should see the "add" error message "Please enter all required information."
+    Then I should see the add error message "Please enter all required information."
     And I capture a screenshot named "empty-name-and-greeting-validation"

@@ -121,8 +121,8 @@ const GreetingUpdate = () => {
                 </button>
             </div>
 
-            {feedback && <p style={{ color: 'green' }} data-testid="result-message">{feedback}</p>}
-            {error && <p style={{ color: 'red' }} data-testid="error-message">{error}</p>}
+            {feedback && <p style={{ color: 'green' }} data-testid="update-result-message">{feedback}</p>}
+            {error && <p style={{ color: 'red' }} data-testid="update-error-message">{error}</p>}
         </div>
     );
 };

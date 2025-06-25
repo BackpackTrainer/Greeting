@@ -21,10 +21,10 @@ Feature:  Find Greeting By Name
 
   Scenario: Find greeting by name for non-existing member
     And I enter "Tarzan" in the Find Greeting by name search field
-    Then I should see the "update" error message "Tarzan is not currently a member. Use the Add a New Member function if you would like to add them."
+    Then I should see the find error message "Tarzan is not currently a member. Use the Add a New Member function if you would like to add them."
 
 
   Scenario: Submitting with empty name should display validation error
     And I enter "" in the Find Greeting by name search field
-    Then I should see the "update" error message "Name field may not be empty."
+    Then I should see the find error message "Name field may not be empty."
     And I capture a screenshot named "empty-name-validation"

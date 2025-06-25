@@ -10,8 +10,8 @@ public class UpdateGreetingPage {
     private static final String NAME_INPUT = "[data-testid='update-name-input']";
     private static final String GREETING_INPUT = "[data-testid='update-greeting-input']";
     private static final String UPDATE_BUTTON = "[data-testid='update-greeting-button']";
-    private static final String SUCCESS_MESSAGE = "[data-testid='result-message']";
-    private static final String ERROR_MESSAGE = "[data-testid='error-message']";
+    private static final String SUCCESS_MESSAGE = "[data-testid='update-result-message']";
+    private static final String ERROR_MESSAGE = "[data-testid='update-error-message']";
 
     public UpdateGreetingPage(Page page) {
         this.page = page;

@@ -9,8 +9,8 @@ public class FindGreetingPage {
 
     private static final String NAME_INPUT = "[data-testid='find-greeting-input']";
     private static final String SUBMIT_BUTTON = "[data-testid='find-greeting-button']";
-    private static final String RESULT_MESSAGE = "[data-testid='result-message']";
-    private static final String ERROR_MESSAGE = "[data-testid='error-message']";
+    private static final String RESULT_MESSAGE = "[data-testid='find-result-message']";
+    private static final String ERROR_MESSAGE = "[data-testid='find-error-message']";
 
     public FindGreetingPage(Page page) {
         this.page = page;

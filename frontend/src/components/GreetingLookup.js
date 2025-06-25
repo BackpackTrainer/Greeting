@@ -49,8 +49,8 @@ const GreetingLookup = () => {
                 Get Greeting
             </button>
 
-            {message && <p style={messageStyle} data-testid="result-message">{message}</p>}
-            {error && <p style={errorStyle} data-testid="error-message">{error}</p>}
+            {message && <p style={messageStyle} data-testid="find-result-message">{message}</p>}
+            {error && <p style={errorStyle} data-testid="find-error-message">{error}</p>}
         </div>
     );
 };

@@ -124,16 +124,11 @@ public class SeleniumPomStepDefinitions {
         assertEquals(expectedGreeting, actual);
     }
 
-    @Then("I should see the {string} error message {string}")
-    public void iShouldSeeTheComponentErrorMessage(String component, String expectedErrorMessage) {
+    @Then("I should see the add error message {string}")
+    public void iShouldSeeTheAddErrorMessage(String expectedErrorMessage) {
         String actual;
-        if (component.equalsIgnoreCase("add")) {
             actual = addMemberPage.getErrorMessage();
-        } else if (component.equalsIgnoreCase("update")) {
-            actual = updateGreetingPage.getErrorMessage();
-        } else {
-            throw new IllegalArgumentException("Unknown component: " + component);
-        }
+
         assertEquals(expectedErrorMessage, actual);
     }
 
@@ -183,5 +178,10 @@ public class SeleniumPomStepDefinitions {
     @Then("I capture a screenshot named {string}")
     public void captureScreenshot(String screenshotName) throws IOException {
         ScreenshotUtility.takeScreenshotWithSelenium(driver, screenshotName);
+    }
+    @Then("I should see the find error message {string}")
+    public void i_should_see_the_find_error_message(String expectedMessage) {
+        String actualMessage = findGreetingPage.getErrorMessage();
+        assertEquals(expectedMessage, actualMessage);
     }
 }

@@ -1,3 +1,4 @@
+
 package com.example.demo.bdd.steps.playwright.basic;
 
 import com.example.demo.bdd.util.ScreenshotUtility;
@@ -26,27 +27,27 @@ public class PlaywrightStepDefinitions {
     @Autowired
     private TestDataCleaner testDataCleaner;
 
-    // Updated CSS Selectors (matching Selenium updates)
+    // Updated CSS Selectors
     private static final String GET_ALL_MEMBERS_BTN = "[data-testid='get-all-members']";
     private static final String CLEAR_BUTTON = "[data-testid='clear-display-button']";
     private static final String MEMBER_ROW = "[data-testid='member-row']";
 
     private static final String FIND_GREETING_INPUT = "[data-testid='find-greeting-input']";
     private static final String FIND_GREETING_BUTTON = "[data-testid='find-greeting-button']";
-    private static final String GREETING_MESSAGE = "[data-testid='result-message']";
-    private static final String GREETING_ERROR = "[data-testid='error-message']";
+    private static final String FIND_RESULT_MESSAGE = "[data-testid='find-result-message']";
+    private static final String FIND_ERROR_MESSAGE = "[data-testid='find-error-message']";
 
     private static final String ADD_NAME_INPUT = "[data-testid='add-name-input']";
     private static final String ADD_GREETING_INPUT = "[data-testid='add-greeting-input']";
     private static final String ADD_GREETING_BUTTON = "[data-testid='add-greeting-button']";
-    private static final String ADD_RESULT_MESSAGE = "[data-testid='result-message']";
-    private static final String ADD_ERROR_MESSAGE = "[data-testid='error-message']";
+    private static final String ADD_RESULT_MESSAGE = "[data-testid='add-result-message']";
+    private static final String ADD_ERROR_MESSAGE = "[data-testid='add-error-message']";
 
     private static final String UPDATE_NAME_INPUT = "[data-testid='update-name-input']";
     private static final String UPDATE_GREETING_INPUT = "[data-testid='update-greeting-input']";
     private static final String UPDATE_GREETING_BUTTON = "[data-testid='update-greeting-button']";
-    private static final String UPDATE_RESULT_MESSAGE = "[data-testid='result-message']";
-    private static final String UPDATE_ERROR_MESSAGE = "[data-testid='error-message']";
+    private static final String UPDATE_RESULT_MESSAGE = "[data-testid='update-result-message']";
+    private static final String UPDATE_ERROR_MESSAGE = "[data-testid='update-error-message']";
 
     @Before(order = 1)
     public void resetDatabaseBeforeEachScenario() {
@@ -144,17 +145,17 @@ public class PlaywrightStepDefinitions {
 
     @Then("I should see {string} in the results")
     public void iShouldSeeGreetingInTheResults(String expectedGreeting) {
-        assertMessage(GREETING_MESSAGE, expectedGreeting);
+        assertMessage(FIND_RESULT_MESSAGE, expectedGreeting);
+    }
+
+    @Then("I should see the greeting {string} for {string}")
+    public void iShouldSeeTheGreetingForName(String expectedGreeting, String name) {
+        assertMessage(FIND_RESULT_MESSAGE, expectedGreeting);
     }
 
     @Then("I should see the success message {string}")
-    public void iShouldSeeTheSuccessMessage(String expectedSuccessMessage) {
-        assertMessage(ADD_RESULT_MESSAGE, expectedSuccessMessage);
-    }
-
-    @Then("I should see the failure message {string}")
-    public void iShouldSeeTheFailureMessage(String expectedErrorMessage) {
-        assertMessage(ADD_ERROR_MESSAGE, expectedErrorMessage);
+    public void iShouldSeeTheSuccessMessage(String expectedMessage) {
+        assertMessage(ADD_RESULT_MESSAGE, expectedMessage);
     }
 
     @Then("I should see the greeting successfully updated message {string}")
@@ -162,35 +163,32 @@ public class PlaywrightStepDefinitions {
         assertMessage(UPDATE_RESULT_MESSAGE, expectedMessage);
     }
 
+    @Then("I should see the failure message {string}")
+    public void iShouldSeeTheFailureMessage(String expectedMessage) {
+        assertMessage(ADD_ERROR_MESSAGE, expectedMessage);
+    }
+
     @Then("I should see the greeting failed to update message {string}")
     public void iShouldSeeTheGreetingFailedToUpdateMessage(String expectedMessage) {
         assertMessage(UPDATE_ERROR_MESSAGE, expectedMessage);
     }
 
-    @Then("I should see the {string} error message {string}")
-    public void iShouldSeeComponentErrorMessage(String component, String expectedErrorMessage) {
-        String cssSelector;
-        switch (component.toLowerCase()) {
-            case "add" -> cssSelector = ADD_ERROR_MESSAGE;
-            case "update" -> cssSelector = UPDATE_ERROR_MESSAGE;
-            default -> throw new IllegalArgumentException("Unknown component: " + component);
-        }
-        assertMessage(cssSelector, expectedErrorMessage);
-    }
-
-    @Then("I should see the greeting {string} for {string}")
-    public void iShouldSeeTheGreetingForName(String expectedGreeting, String name) {
-        assertMessage(GREETING_MESSAGE, expectedGreeting);
+    @Then("I should see the find error message {string}")
+    public void iShouldSeeTheFindErrorMessage(String expectedMessage) {
+        assertMessage(FIND_ERROR_MESSAGE, expectedMessage);
     }
 
     private void assertMessage(String cssSelector, String expectedMessage) {
-        // Instead of using the cssSelector, we'll locate by text directly
-        Locator locator = page.getByText(expectedMessage, new Page.GetByTextOptions().setExact(true));
+        Locator locator = page.locator(cssSelector);
         locator.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE));
         String actualText = locator.innerText();
         assertEquals(expectedMessage, actualText);
     }
 
+    @Then("I should see the add error message {string}")
+    public void i_should_see_the_add_error_message(String expectedMessage) {
+        assertMessage(ADD_ERROR_MESSAGE, expectedMessage);
+    }
 
     @Then("I capture a screenshot named {string}")
     public void captureScreenshot(String screenshotName) throws IOException {

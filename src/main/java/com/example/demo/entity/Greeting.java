@@ -13,6 +13,15 @@ public class Greeting {
     private String name;
     private String message;
 
+    public Greeting(String name, String message) {
+        this.name = name;
+        this.message = message;
+    }
+
+    public Greeting() {
+        // Default constructor for JPA
+    }
+
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 

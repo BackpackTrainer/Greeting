@@ -44,7 +44,6 @@ const GreetingUpdate = () => {
 
             if (response.ok) {
                 const result = await response.json();
-                console.log("Update successful:", result);
                 setFeedback(`Greeting for ${result.name} was successfully updated.`);
                 setError('');
             } else if (response.status === 404) {

@@ -178,6 +178,7 @@ public class PlaywrightStepDefinitions {
         assertMessage(FIND_ERROR_MESSAGE, expectedMessage);
     }
 
+
     private void assertMessage(String cssSelector, String expectedMessage) {
         Locator locator = page.locator(cssSelector);
         locator.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE));

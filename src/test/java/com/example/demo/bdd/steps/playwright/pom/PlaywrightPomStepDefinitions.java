@@ -154,13 +154,26 @@ public class PlaywrightPomStepDefinitions {
 
     @Then("I should see {string} in the results")
     public void iShouldSeeGreetingInTheResults(String expectedGreeting) {
-        assertEquals(expectedGreeting, findGreetingPage.getGreetingMessage(expectedGreeting).trim());
+        assertEquals(expectedGreeting, findGreetingPage.getGreetingMessage().trim());
     }
 
     @Then("I should see the greeting {string} for {string}")
     public void iShouldSeeGreetingForName(String expectedGreeting, String name) {
-        assertEquals(expectedGreeting, findGreetingPage.getGreetingMessage(expectedGreeting).trim());
+        assertEquals(expectedGreeting, findGreetingPage.getGreetingMessage().trim());
     }
+    @Then("I should see the find error message {string}")
+    public void iShouldSeeTheFindErrorMessage(String expectedMessage) {
+        String actualMessage = findGreetingPage.getGreetingMessage();
+        assertEquals(expectedMessage, actualMessage);
+    }
+
+
+    @Then("I should see the add error message {string}")
+    public void i_should_see_the_add_error_message(String string) {
+        String actualMessage = addMemberPage.getErrorMessage().trim();
+        assertEquals(string, actualMessage);
+    }
+
 
     @Then("I should see the {string} error message {string}")
     public void iShouldSeeComponentErrorMessage(String component, String expectedMessage) {

@@ -8,6 +8,7 @@ Feature:  Find Greeting By Name
     Given I have a browser open
     And I enter the url "localhost:3000"
 
+  @HappyPath
   Scenario Outline: Find greeting by name for existing member
     And I enter "<name>" in the Find Greeting by name search field
     Then I should see "<greeting>" in the results
@@ -19,11 +20,12 @@ Feature:  Find Greeting By Name
       | Carol | Good evening, Carol!     |
       | Dante | Looking good, Dude!      |
 
+    @ErrorCondition
   Scenario: Find greeting by name for non-existing member
     And I enter "Tarzan" in the Find Greeting by name search field
     Then I should see the find error message "Tarzan is not currently a member. Use the Add a New Member function if you would like to add them."
 
-
+@InvalidInput
   Scenario: Submitting with empty name should display validation error
     And I enter "" in the Find Greeting by name search field
     Then I should see the find error message "Name field may not be empty."

@@ -1,4 +1,4 @@
-package com.example.demo.bdd;
+package com.example.demo.bdd.runners.playwright.pom;
 
 import org.junit.platform.suite.api.ConfigurationParameter;
 import org.junit.platform.suite.api.IncludeEngines;
@@ -11,7 +11,7 @@ import org.junit.platform.suite.api.Suite;
 @ConfigurationParameter(key = "cucumber.plugin", value = "pretty")
 @ConfigurationParameter(
         key = "cucumber.glue",
-        value = "com.example.demo.bdd.steps.selenium.pom,com.example.demo.bdd.config"
+        value = "com.example.demo.bdd.steps.playwright.pom,com.example.demo.bdd.config"
 )
-public class CucumberSeleniumPageObjectModelTest {
+public class PlaywrightPOMWhatImWorkingOnNowTest {
 }

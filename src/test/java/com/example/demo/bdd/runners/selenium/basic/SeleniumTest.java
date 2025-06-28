@@ -1,4 +1,4 @@
-package com.example.demo.bdd;
+package com.example.demo.bdd.runners.selenium.basic;
 
 import org.junit.platform.suite.api.*;
 
@@ -10,5 +10,5 @@ import org.junit.platform.suite.api.*;
         key = "cucumber.glue",
         value = "com.example.demo.bdd.steps.selenium.basic,com.example.demo.bdd.config"
 )
-public class CucumberSeleniumTest {
+public class SeleniumTest {
 }

@@ -1,7 +1,6 @@
 package com.example.demo.bdd.pages.playwright;
 
-import com.microsoft.playwright.*;
-import com.microsoft.playwright.options.WaitForSelectorState;
+import com.microsoft.playwright.Page;
 
 public class FindGreetingPage {
 
@@ -17,32 +16,20 @@ public class FindGreetingPage {
     }
 
     public void enterName(String name) {
-        page.locator(NAME_INPUT).fill(name);
+        page.fill(NAME_INPUT, name);
     }
 
     public void submit() {
-        page.locator(SUBMIT_BUTTON).click();
-        page.waitForSelector("[data-testid='result-message'], [data-testid='error-message']",
-                new Page.WaitForSelectorOptions().setTimeout(10000).setState(WaitForSelectorState.VISIBLE));
+        page.click(SUBMIT_BUTTON);
+        page.waitForSelector(RESULT_MESSAGE + ", " + ERROR_MESSAGE);
     }
 
-
-    public String getGreetingMessage(String expectedMessage) {
-        Locator locator = page.locator("[data-testid='result-message']")
-                .filter(new Locator.FilterOptions().setHasText(expectedMessage))
-                .filter(new Locator.FilterOptions().setHasNotText("New member"));
-        locator.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE));
-        return locator.innerText();
+    public String getGreetingMessage() {
+        if (page.isVisible(RESULT_MESSAGE)) {
+            return page.textContent(RESULT_MESSAGE).trim();
+        } else if (page.isVisible(ERROR_MESSAGE)) {
+            return page.textContent(ERROR_MESSAGE).trim();
+        }
+        return "No result or error message found.";
     }
-
-
-
-
-
-    public String getErrorMessage() {
-        Locator scopedLocator = page.locator("h2:has-text('Find Greeting by Name')").locator(ERROR_MESSAGE);
-        scopedLocator.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE));
-        return scopedLocator.innerText();
-    }
-
 }

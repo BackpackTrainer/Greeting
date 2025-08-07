@@ -1,4 +1,4 @@
-@WhatImWorkingOnNow
+
 Feature: Updating greetings for members
 
   Background:

@@ -20,7 +20,6 @@
         <relativePath/>
     </parent>
 
-
     <properties>
         <java.version>17</java.version>
         <cucumber.version>7.22.2</cucumber.version>
@@ -164,7 +163,6 @@
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
             <version>2.3.0</version> <!-- Latest as of now -->
         </dependency>
-
 
     </dependencies>
 

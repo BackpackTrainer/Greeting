@@ -13,5 +13,9 @@ import org.junit.platform.suite.api.Suite;
         key = "cucumber.glue",
         value = "com.example.demo.bdd.steps.playwright.pom,com.example.demo.bdd.config"
 )
+@ConfigurationParameter(
+        key = "cucumber.filter.tags",
+        value = "@WhatImWorkingOnNow"
+)
 public class PlaywrightPOMWhatImWorkingOnNowTest {
 }

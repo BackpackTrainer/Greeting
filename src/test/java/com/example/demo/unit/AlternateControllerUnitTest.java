@@ -29,8 +29,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         @MockBean
         private GreetingService greetingService;
 
-
-
         private ObjectMapper objectMapper = new ObjectMapper();
 
         @Test

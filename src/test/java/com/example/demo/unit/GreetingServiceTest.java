@@ -29,14 +29,15 @@ class GreetingServiceTest {
 
     @Test
     void testGreetReturnsDefaultWhenNotFound() {
-        when(greetingRepository.findByName("John")).thenReturn(Optional.empty());
+        String testName = "John";
+        when(greetingRepository.findByName(testName)).thenReturn(Optional.empty());
 
         NoSuchElementException ex = assertThrows(
                 NoSuchElementException.class,
-                () -> greetingService.greet("John")
+                () -> greetingService.greet(testName)
         );
 
-        assertEquals("No greeting found for name: John", ex.getMessage());
+        assertEquals("No greeting found for name: " + testName, ex.getMessage());
     }
 
 
@@ -64,8 +65,8 @@ class GreetingServiceTest {
 
         assertAll("Verify greeting list contents",
                 () -> assertEquals(2, results.size()),
-                () -> assertEquals("Alice", results.get(0).getName()),
-                () -> assertEquals("Hi Alice!", results.get(0).getMessage())
+                () -> assertEquals("Alice", results.get(0).name()),
+                () -> assertEquals("Hi Alice!", results.get(0).message())
         );
     }
     @Test

@@ -58,7 +58,7 @@ public class GreetingController {
         } else {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
-                    .body("No update made. " + dto.getName() + " is not a member.");
+                    .body("No update made. " + dto.name() + " is not a member.");
         }
     }
 

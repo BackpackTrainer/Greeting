@@ -43,20 +43,20 @@ public class GreetingServiceImpl implements GreetingService {
 
     public GreetingDto saveGreeting(GreetingDto dto) {
         // Check if greeting with the same name exists
-        Optional<Greeting> existingGreetingOpt = greetingRepository.findByName(dto.getName());
+        Optional<Greeting> existingGreetingOpt = greetingRepository.findByName(dto.name());
 
         Greeting savedGreeting;
 
         if (existingGreetingOpt.isPresent()) {
             // Update existing greeting
             Greeting existingGreeting = existingGreetingOpt.get();
-            existingGreeting.setMessage(dto.getMessage());
+            existingGreeting.setMessage(dto.message());
             savedGreeting = greetingRepository.save(existingGreeting);
         } else {
             // Create new greeting
             Greeting newGreeting = new Greeting();
-            newGreeting.setName(dto.getName());
-            newGreeting.setMessage(dto.getMessage());
+            newGreeting.setName(dto.name());
+            newGreeting.setMessage(dto.message());
             savedGreeting = greetingRepository.save(newGreeting);
         }
 
@@ -66,24 +66,24 @@ public class GreetingServiceImpl implements GreetingService {
 
     @Override
     public GreetingDto addGreeting(GreetingDto dto) {
-        if (greetingRepository.findByName(dto.getName()).isPresent()) {
-            throw new IllegalArgumentException("Name already exists: " + dto.getName());
+        if (greetingRepository.findByName(dto.name()).isPresent()) {
+            throw new IllegalArgumentException("Name already exists: " + dto.name());
         }
 
         Greeting newGreeting = new Greeting();
-        newGreeting.setName(dto.getName());
-        newGreeting.setMessage(dto.getMessage());
+        newGreeting.setName(dto.name());
+        newGreeting.setMessage(dto.message());
         Greeting saved = greetingRepository.save(newGreeting);
         return mapToDto(saved);
     }
 
     @Override
     public Optional<GreetingDto> updateGreeting(GreetingDto dto) {
-        Optional<Greeting> existingGreeting = greetingRepository.findByName(dto.getName());
+        Optional<Greeting> existingGreeting = greetingRepository.findByName(dto.name());
 
         if (existingGreeting.isPresent()) {
             Greeting greeting = existingGreeting.get();
-            greeting.setMessage(dto.getMessage());
+            greeting.setMessage(dto.message());
             Greeting saved = greetingRepository.save(greeting);
             return Optional.of(mapToDto(saved));
         }
@@ -93,9 +93,9 @@ public class GreetingServiceImpl implements GreetingService {
 
 
     private GreetingDto mapToDto(Greeting greeting) {
-        GreetingDto dto = new GreetingDto();
-        dto.setName(greeting.getName());
-        dto.setMessage(greeting.getMessage());
+        String name = greeting.getName();
+        String message = greeting.getMessage();
+        GreetingDto dto = new GreetingDto(name, message);
         return dto;
     }
 }

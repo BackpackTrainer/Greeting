@@ -60,8 +60,8 @@ class GreetingControllerTest {
 
         assertAll("Verify getAllGreetings() result",
                 () -> assertEquals(2, result.size()),
-                () -> assertEquals("A", result.get(0).getName()),
-                () -> assertEquals("Hi", result.get(0).getMessage())
+                () -> assertEquals("A", result.get(0).name()),
+                () -> assertEquals("Hi", result.get(0).message())
         );
     }
 
@@ -73,8 +73,8 @@ class GreetingControllerTest {
         GreetingDto result = controller.saveGreeting(input);
 
         assertAll("Verify saveGreeting() result",
-                () -> assertEquals("Dave", result.getName()),
-                () -> assertEquals("Hi Dave!", result.getMessage())
+                () -> assertEquals("Dave", result.name()),
+                () -> assertEquals("Hi Dave!", result.message())
         );
     }
 
@@ -87,8 +87,8 @@ class GreetingControllerTest {
 
         assertAll("Verify addGreeting() success response",
                 () -> assertEquals(HttpStatus.OK, response.getStatusCode()),
-                () -> assertEquals("Eve", response.getBody().getName()),
-                () -> assertEquals("Hello!", response.getBody().getMessage())
+                () -> assertEquals("Eve", response.getBody().name()),
+                () -> assertEquals("Hello!", response.getBody().message())
         );
     }
 

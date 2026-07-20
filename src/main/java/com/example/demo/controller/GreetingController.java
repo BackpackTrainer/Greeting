@@ -61,5 +61,4 @@ public class GreetingController {
                     .body("No update made. " + dto.name() + " is not a member.");
         }
     }
-
 }

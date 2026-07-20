@@ -30,6 +30,7 @@ class GreetingServiceTest {
     @Test
     void testGreetReturnsDefaultWhenNotFound() {
         String testName = "John";
+        String expectedResult = "No greeting found for name: " + testName;
         when(greetingRepository.findByName(testName)).thenReturn(Optional.empty());
 
         NoSuchElementException ex = assertThrows(
@@ -37,7 +38,7 @@ class GreetingServiceTest {
                 () -> greetingService.greet(testName)
         );
 
-        assertEquals("No greeting found for name: " + testName, ex.getMessage());
+        assertEquals(expectedResult, ex.getMessage());
     }
 
 
@@ -86,6 +87,4 @@ class GreetingServiceTest {
 
         assertTrue(result.isEmpty());
     }
-
-
 }

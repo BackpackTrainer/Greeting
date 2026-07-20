@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.demo.mapper.GreetingMapper">
+
+    <!-- 1. Find By ID Query (Added 'name') -->
+    <select id="findById" parameterType="long" resultType="Greeting">
+        SELECT id, name, message FROM greeting WHERE id = #{id}
+    </select>
+
+    <!-- 2. Find All Query (Added 'name') -->
+    <select id="findAll" resultType="Greeting">
+        SELECT id, name, message FROM greeting
+    </select>
+
+    <!-- 3. Insert Statement (Added 'name' column and value mapping) -->
+    <insert id="insert" parameterType="Greeting" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO greeting (name, message)
+        VALUES (#{name}, #{message})
+    </insert>
+
+    <!-- Find By Name Query -->
+    <select id="findByName" parameterType="string" resultType="Greeting">
+        SELECT id, name, message FROM greeting WHERE name = #{name}
+    </select>
+
+    <!-- Update Statement -->
+    <update id="update" parameterType="Greeting">
+        UPDATE greeting
+        SET message = #{message}
+        WHERE id = #{id}
+    </update>
+
+
+</mapper>

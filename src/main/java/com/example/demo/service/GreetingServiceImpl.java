@@ -1,101 +1,86 @@
 package com.example.demo.service;
+
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
 import com.example.demo.dto.GreetingDto;
 import com.example.demo.entity.Greeting;
-import com.example.demo.repository.GreetingRepository;
+import com.example.demo.mapper.GreetingMapper; // Imported new MyBatis Mapper
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 
 @Service
 public class GreetingServiceImpl implements GreetingService {
 
-    private final GreetingRepository greetingRepository;
-
+    private final GreetingMapper greetingMapper; // Swapped out GreetingRepository
 
     @Autowired
-    public GreetingServiceImpl(GreetingRepository repository) {
-        this.greetingRepository = repository;
+    public GreetingServiceImpl(GreetingMapper mapper) {
+        this.greetingMapper = mapper;
     }
-
 
     @Override
     public String greet(String name) {
-        return greetingRepository.findByName(name)
+        // Uses Optional.ofNullable to handle cases where findByName returns null
+        return Optional.ofNullable(greetingMapper.findByName(name))
                 .map(Greeting::getMessage)
                 .orElseThrow(() -> new NoSuchElementException("No greeting found for name: " + name));
     }
 
-
     @Override
     public List<GreetingDto> findAllGreetings() {
-        return greetingRepository.findAll()
+        return greetingMapper.findAll()
                 .stream()
                 .map(g -> new GreetingDto(g.getName(), g.getMessage()))
                 .collect(Collectors.toList());
     }
 
-@Override
-
+    @Override
     public GreetingDto saveGreeting(GreetingDto dto) {
-        // Check if greeting with the same name exists
-        Optional<Greeting> existingGreetingOpt = greetingRepository.findByName(dto.name());
+        Greeting existingGreeting = greetingMapper.findByName(dto.name());
 
-        Greeting savedGreeting;
-
-        if (existingGreetingOpt.isPresent()) {
-            // Update existing greeting
-            Greeting existingGreeting = existingGreetingOpt.get();
+        if (existingGreeting != null) {
+            // Update existing greeting using explicit update query
             existingGreeting.setMessage(dto.message());
-            savedGreeting = greetingRepository.save(existingGreeting);
+            greetingMapper.update(existingGreeting);
+            return mapToDto(existingGreeting);
         } else {
-            // Create new greeting
+            // Create and insert new greeting
             Greeting newGreeting = new Greeting();
             newGreeting.setName(dto.name());
             newGreeting.setMessage(dto.message());
-            savedGreeting = greetingRepository.save(newGreeting);
+            greetingMapper.insert(newGreeting);
+            return mapToDto(newGreeting);
         }
-
-        // Convert to DTO and return
-        return mapToDto(savedGreeting);
     }
 
     @Override
     public GreetingDto addGreeting(GreetingDto dto) {
-        if (greetingRepository.findByName(dto.name()).isPresent()) {
+        if (greetingMapper.findByName(dto.name()) != null) {
             throw new IllegalArgumentException("Name already exists: " + dto.name());
         }
 
         Greeting newGreeting = new Greeting();
         newGreeting.setName(dto.name());
         newGreeting.setMessage(dto.message());
-        Greeting saved = greetingRepository.save(newGreeting);
-        return mapToDto(saved);
+        greetingMapper.insert(newGreeting); // MyBatis automatically sets the ID back onto newGreeting via useGeneratedKeys
+        return mapToDto(newGreeting);
     }
 
     @Override
     public Optional<GreetingDto> updateGreeting(GreetingDto dto) {
-        Optional<Greeting> existingGreeting = greetingRepository.findByName(dto.name());
+        Greeting existingGreeting = greetingMapper.findByName(dto.name());
 
-        if (existingGreeting.isPresent()) {
-            Greeting greeting = existingGreeting.get();
-            greeting.setMessage(dto.message());
-            Greeting saved = greetingRepository.save(greeting);
-            return Optional.of(mapToDto(saved));
+        if (existingGreeting != null) {
+            existingGreeting.setMessage(dto.message());
+            greetingMapper.update(existingGreeting);
+            return Optional.of(mapToDto(existingGreeting));
         }
-
-        return Optional.empty(); // No member found to update
+        return Optional.empty();
     }
 
-
     private GreetingDto mapToDto(Greeting greeting) {
-        String name = greeting.getName();
-        String message = greeting.getMessage();
-        GreetingDto dto = new GreetingDto(name, message);
-        return dto;
+        return new GreetingDto(greeting.getName(), greeting.getMessage());
     }
 }
